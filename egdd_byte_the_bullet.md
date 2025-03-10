@@ -1,51 +1,49 @@
-# Game Name
+# Byte the Bullet
 
 ## Elevator Pitch
 
-*A one sentence pitch for your game. Pretend that your were pitching your game to a executive going to the elevator. You have less than 60 Seconds. Check [this resource](http://www.gameacademy.com/perfecting-indie-games-elevator-pitch/) for more information.*
+Byte the Bullet is a rogue-like dungeon crawler that combines fast-paced combat with hands-on coding challenges. Players fight through glitched-out levels, debug broken code, and solve algorithmic puzzles to repair the world and defeat corrupted bosses and enemies.
 
 ## Influences (Brief)
 
 - *Influence #1*:
-  - Medium: *(Television, Games, Literature, Movies, etc.)*
-  - Explanation: *In one paragraph or less, explain why this is an influence.*
+  - Enter The Gungeon
+  - Explanation: This game is one of the definitive top down shooter + dungeon crawler games, and the gameplay of Byte the Bullet will be similar in the sense that it is a top down shooter + dungeon crawler.
 - *Influence #2*:
-  - Medium: *(Television, Games, Literature, Movies, etc.)*
-  - Explanation: *In one paragraph or less, explain why this is an influence.*
-- *Influence #3*:
-  - Medium: *(Television, Games, Literature, Movies, etc.)*
-  - Explanation: *In one paragraph or less, explain why this is an influence.*
+  - LeetCode
+  - Explanation: The hands-on coding challenges in the game are similar to the coding challenges from the website LeetCode.
 
 ## Core Gameplay Mechanics (Brief)
 
 *Give a very high-level description of any core gameplay mechanics*
 
-- *Gameplay Mechanic #1*
-- *Gameplay Mechanic #2*
-- *Gameplay Mechanic #3*
-- *Gameplay Mechanic #4*
+- Top-down combat - The player will view their character from a top-down camera angle and will need to shoot enemies and dodge bullets in order to survive.
+- Debugging Glitched Rooms - some of the rooms you encounter will feature glitched code that the player will have to debug to enter.
+- Leetcode chests - There will be chests in the game with powerful items inside, but they may only be opened after solving a coding problem.
+- Stack-based inverntory - 
+- Algorithm-based weapons - 
+- Difficulty Selection - There will be different difficulties selectable that will make the coding challenges easier or more difficult.
 
 # Learning Aspects
 
 ## Learning Domains
 
-*Briefly list any and all of the disciplines and learning domains for this subject.*
+Debugging code and solving coding problems at different levels.
 
 ## Target Audiences
 
-*Who are your learners?*
+- Beginner coders who want to enhance their coding and debugging skills
+- Experienced coders who want to strengthen their coding and debugging ability.
 
 ## Target Contexts
 
-*Describe what kinds of formal and informal learning contexts this will be used in (e.g., courses, k-12 computer labs during free time).*
+This would be used as a for-fun activity for students who want to get better at coding on their own time. Due to its use of weapons, it would be limited to high school students and above.
 
 ## Learning Objectives
 
-*Remember, Learning Objectives are NOT simply topics. They are statements of observable behavior that a learner can do after the learning experience. You cannot observe someone "understanding" or "knowing" something.*
-
-- *Short Name*: *Formal Learning Objective #1*
-- *Short Name*: *Formal Learning Objective #2*
-- *Short Name*: *Formal Learning Objective #3*
+- By playing this game, players will be able to identify and fix syntax errors in code snippets, and develop problem-solving and debugging skills.
+- By playing this game, players will be able to solve simple algorithmic problems.
+- By playing this game, players will be able to use data structure concepts more effectively when coding.
 
 ## Prerequisite Knowledge
 
