@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 408874d5c36c4cd44863e1c7bfb362ca
+guid: e6f1d45a68394404cab3ce31102a8801
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8688392260014441854
-    second: snake_0
+      213: -3360564726293676877
+    second: robot_run_side_001_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: snake_0
+      name: robot_run_side_001_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 3338
-        height: 4822
+        width: 16
+        height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 28af598c541ac6780800000000000000
-      internalID: -8688392260014441854
+      spriteID: 3bcbe8cbf20ec51d0800000000000000
+      internalID: -3360564726293676877
       vertices: []
       indices: 
       edges: []
@@ -147,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      snake_0: -8688392260014441854
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
