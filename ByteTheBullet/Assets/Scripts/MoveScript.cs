@@ -119,8 +119,6 @@ public class TopDownMovement : MonoBehaviour
             // Create directional idle dash based on facing direction
             float horizontalComponent = isFacingRight ? idleDashSideComponent : -idleDashSideComponent;
             dodgeDirection = new Vector2(horizontalComponent, idleDashUpComponent);
-            Debug.Log("Idle dash detected - using direction based on facing: " + 
-                      (isFacingRight ? "right" : "left") + ", vector: " + dodgeDirection);
         }
         else if (dodgeDirection.magnitude == 0)
         {
@@ -153,12 +151,10 @@ public class TopDownMovement : MonoBehaviour
             if (isFacingRight)
             {
                 animator.SetBool("isDashingBW", true);
-                Debug.Log("Setting isDashingBW to true (Idle Dash Right)");
             }
             else
             {
                 animator.SetBool("isDashingBW", true);
-                Debug.Log("Setting isDashingBW to true (Idle Dash Left)");
             }
             return;
         }
@@ -170,24 +166,20 @@ public class TopDownMovement : MonoBehaviour
             if (direction.x > 0)
             {
                 animator.SetBool("isDashingRight", true);
-                Debug.Log("Setting isDashingRight to true (Diagonal)");
             }
             else
             {
                 animator.SetBool("isDashingLeft", true);
-                Debug.Log("Setting isDashingLeft to true (Diagonal)");
             }
             
             // Set vertical component
             if (direction.y > 0)
             {
                 animator.SetBool("isDashingUp", true);
-                Debug.Log("Setting isDashingUp to true (Diagonal)");
             }
             else
             {
                 animator.SetBool("isDashingDown", true);
-                Debug.Log("Setting isDashingDown to true (Diagonal)");
             }
             return;
         }
@@ -198,12 +190,10 @@ public class TopDownMovement : MonoBehaviour
             if (direction.x > 0)
             {
                 animator.SetBool("isDashingRight", true);
-                Debug.Log("Setting isDashingRight to true");
             }
             else
             {
                 animator.SetBool("isDashingLeft", true);
-                Debug.Log("Setting isDashingLeft to true");
             }
             return;
         }
@@ -214,12 +204,10 @@ public class TopDownMovement : MonoBehaviour
             if (direction.y > 0)
             {
                 animator.SetBool("isDashingUp", true);
-                Debug.Log("Setting isDashingUp to true");
             }
             else
             {
                 animator.SetBool("isDashingDown", true);
-                Debug.Log("Setting isDashingDown to true");
             }
             return;
         }
@@ -285,8 +273,6 @@ public class TopDownMovement : MonoBehaviour
         animator.SetBool("isDashingUp", false);
         animator.SetBool("isDashingDown", false);
         animator.SetBool("isDashingBW", false);
-        
-        Debug.Log("Reset all animation states");
     }
 
     void FlipSprite()
