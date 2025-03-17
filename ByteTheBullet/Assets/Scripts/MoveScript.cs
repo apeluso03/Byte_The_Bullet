@@ -21,7 +21,6 @@ public class TopDownMovement : MonoBehaviour
     private float dodgeTimer = 0f; // Timer for dodge duration
     private float cooldownTimer = 0f; // Timer for dodge cooldown
     private Vector2 dodgeDirection; // Store the dodge direction
-    private bool animationTriggered = false; // Flag to track if animation was triggered
     private bool isIdleDash = false; // Track if this is a dash from idle state
 
     void Start()
