@@ -7,6 +7,9 @@ public class TopDownMovement : MonoBehaviour
     public float dodgeSpeed = 10f; // Dodge Roll Speed
     public float dodgeDuration = 0.2f; // Duration of the dodge roll
     public float dodgeCooldown = 1f; // Cooldown between dodges
+    // Base direction for idle dash (up and right)
+    public float idleDashUpComponent = 0.7f;
+    public float idleDashSideComponent = 0.3f;
 
     private Rigidbody2D rb; // Player's rb
     private Vector2 movement; // Movement Input
@@ -19,6 +22,7 @@ public class TopDownMovement : MonoBehaviour
     private float cooldownTimer = 0f; // Timer for dodge cooldown
     private Vector2 dodgeDirection; // Store the dodge direction
     private bool animationTriggered = false; // Flag to track if animation was triggered
+    private bool isIdleDash = false; // Track if this is a dash from idle state
 
     void Start()
     {
@@ -107,13 +111,25 @@ public class TopDownMovement : MonoBehaviour
 
         // Determine dodge direction
         dodgeDirection = movement;
-        if (dodgeDirection.magnitude == 0)
+        
+        // Check if this is an idle dash (no movement input)
+        isIdleDash = dodgeDirection.magnitude == 0;
+        
+        if (isIdleDash)
         {
-            // Default to the direction the player is facing
+            // Create directional idle dash based on facing direction
+            float horizontalComponent = isFacingRight ? idleDashSideComponent : -idleDashSideComponent;
+            dodgeDirection = new Vector2(horizontalComponent, idleDashUpComponent);
+            Debug.Log("Idle dash detected - using direction based on facing: " + 
+                      (isFacingRight ? "right" : "left") + ", vector: " + dodgeDirection);
+        }
+        else if (dodgeDirection.magnitude == 0)
+        {
+            // Fallback to the direction the player is facing (should never happen now)
             dodgeDirection = isFacingRight ? Vector2.right : Vector2.left;
         }
 
-        // Normalize dodge direction
+        // Ensure the direction is normalized for consistent speed
         dodgeDirection.Normalize();
 
         // Reset all animation states first
@@ -131,6 +147,23 @@ public class TopDownMovement : MonoBehaviour
     
     void SetDashDirectionAnimation(Vector2 direction)
     {
+        // Special case for idle dash
+        if (isIdleDash)
+        {
+            // Set the appropriate idle dash animation based on facing direction
+            if (isFacingRight)
+            {
+                animator.SetBool("isDashingBW", true);
+                Debug.Log("Setting isDashingBW to true (Idle Dash Right)");
+            }
+            else
+            {
+                animator.SetBool("isDashingBW", true);
+                Debug.Log("Setting isDashingBW to true (Idle Dash Left)");
+            }
+            return;
+        }
+        
         // For diagonal dashes, set both horizontal and vertical animations
         if (direction.x != 0 && direction.y != 0)
         {
@@ -252,6 +285,7 @@ public class TopDownMovement : MonoBehaviour
         animator.SetBool("isDashingLeft", false);
         animator.SetBool("isDashingUp", false);
         animator.SetBool("isDashingDown", false);
+        animator.SetBool("isDashingBW", false);
         
         Debug.Log("Reset all animation states");
     }
