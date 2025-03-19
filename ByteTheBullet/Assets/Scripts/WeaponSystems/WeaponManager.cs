@@ -47,10 +47,15 @@ public class WeaponManager : MonoBehaviour
     {
         if (currentWeapon == null) return;
         
-        // Handle weapon inputs
-        if (Input.GetButton("Fire1"))
-            currentWeapon.Fire();
-            
+        // Only handle weapon inputs if the current weapon isn't a StrictSemiAutoWeapon
+        if (!(currentWeapon is StrictSemiAutoWeapon))
+        {
+            // Handle weapon inputs
+            if (Input.GetButton("Fire1"))
+                currentWeapon.Fire();
+        }
+        // The StrictSemiAutoWeapon will handle its own input in its Update method
+        
         if (Input.GetKeyDown(KeyCode.R))
             currentWeapon.Reload();
             

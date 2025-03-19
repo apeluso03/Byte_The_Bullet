@@ -18,6 +18,9 @@ public abstract class WeaponBase : MonoBehaviour
     protected Transform playerTransform;
     protected bool isActive = false;
     
+    // Add a protection flag at the class level
+    protected bool processingFireRequest = false;
+    
     // Called when weapon is equipped
     public virtual void Initialize(Transform player)
     {
@@ -63,8 +66,23 @@ public abstract class WeaponBase : MonoBehaviour
         transform.position = playerTransform.position;
     }
     
+    // Modify the Fire method to prevent recursive calls
+    public virtual void Fire()
+    {
+        // Prevent re-entry
+        if (processingFireRequest)
+        {
+            return;
+        }
+        
+        processingFireRequest = true;
+        
+        // Implement your firing logic here or in derived classes
+        
+        processingFireRequest = false;
+    }
+    
     // Implement in specific weapons
-    public virtual void Fire() { }
     public virtual void Reload() { }
     public virtual string GetAmmoText() { return ""; }
 }
