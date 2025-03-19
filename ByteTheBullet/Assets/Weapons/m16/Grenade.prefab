@@ -196,3 +196,4 @@ MonoBehaviour:
     m_Bits: 128
   explosionEffectPrefab: {fileID: 8023722977694695407, guid: 2bc1e08d6f4756340a139f00680d312b, type: 3}
   explosionSound: {fileID: 8300000, guid: 73ae3eb9cb690bc47be124f858ab080a, type: 3}
+  explosionVolume: 10

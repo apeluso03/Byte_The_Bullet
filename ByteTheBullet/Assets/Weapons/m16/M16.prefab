@@ -237,6 +237,12 @@ MonoBehaviour:
   currentAmmo: 0
   bulletSpeed: 20
   bulletDamage: 10
+  bulletFireSound: {fileID: 8300000, guid: 0421972d7099d2f42bce8b174092fce1, type: 3}
+  bulletReloadSound: {fileID: 8300000, guid: bae524f84ac2b6e44a17a9040a0af0ab, type: 3}
+  emptySound: {fileID: 0}
+  switchModeSound: {fileID: 8300000, guid: 869139ac9fcc7f84e8322b08061e7b94, type: 3}
+  grenadeLauncherFireSound: {fileID: 8300000, guid: 66c0601c7b56b4240b0740417c121d67, type: 3}
+  grenadeLauncherReloadSound: {fileID: 8300000, guid: bae524f84ac2b6e44a17a9040a0af0ab, type: 3}
   bulletPrefab: {fileID: 1028500552806458348, guid: d9c4cbf6e551cf542a2e32523a509e3a, type: 3}
   bulletSprites:
   - {fileID: 8568647410969158727, guid: d9002a2fe656d284aac03100e915a042, type: 3}
@@ -247,10 +253,6 @@ MonoBehaviour:
   - {fileID: -2127093034742489771, guid: 8a05e11659fbdaf40b7bd67580b87882, type: 3}
   - {fileID: 791223368009181982, guid: b0f95afbc03b1aa45b65c81ed1066a63, type: 3}
   muzzleFlashPrefab: {fileID: 0}
-  fireSound: {fileID: 0}
-  reloadSound: {fileID: 0}
-  emptySound: {fileID: 0}
-  switchModeSound: {fileID: 0}
   hasGrenadeLauncher: 1
   grenadePrefab: {fileID: 5370142765739854178, guid: 8853459bbc4e36748b5c61cba60c6156, type: 3}
   backupGrenadePrefab: {fileID: 5370142765739854178, guid: 8853459bbc4e36748b5c61cba60c6156, type: 3}
@@ -311,8 +313,7 @@ MonoBehaviour:
   grenadePrefab: {fileID: 5370142765739854178, guid: 8853459bbc4e36748b5c61cba60c6156, type: 3}
   muzzlePoint: {fileID: 1225438786274410506}
   launcherSprite: {fileID: 0}
-  fireSound: {fileID: 0}
-  reloadSound: {fileID: 0}
+  useSeparateAudio: 0
   isActive: 0
   isReloading: 0
 --- !u!1 &8056114748468643569

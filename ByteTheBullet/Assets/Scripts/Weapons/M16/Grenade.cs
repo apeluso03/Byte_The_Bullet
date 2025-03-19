@@ -11,6 +11,8 @@ public class Grenade : MonoBehaviour
     [Header("Effects")]
     public GameObject explosionEffectPrefab;
     public AudioClip explosionSound;
+    [Range(0.1f, 10.0f)]
+    public float explosionVolume = 1.0f;
     
     private bool hasExploded = false;
     private Rigidbody2D rb;
@@ -96,10 +98,31 @@ public class Grenade : MonoBehaviour
             Debug.LogError("No explosion effect prefab assigned to grenade!");
         }
         
-        // Play explosion sound
+        // Play explosion sound - FIXED VERSION
         if (explosionSound != null)
         {
-            AudioSource.PlayClipAtPoint(explosionSound, transform.position);
+            // Create a dedicated GameObject for the loud explosion sound
+            GameObject audioObject = new GameObject("LoudExplosionSound");
+            audioObject.transform.position = transform.position;
+            
+            // Add audio source with maximum volume settings
+            AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+            audioSource.clip = explosionSound;
+            audioSource.volume = 3.0f; // Much louder than standard
+            audioSource.spatialBlend = 0.0f; // Pure 2D sound for maximum reach
+            audioSource.priority = 0; // Highest priority (0-255)
+            
+            // Optional: Add slight randomization for more natural sound
+            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            
+            // Play the sound
+            audioSource.Play();
+            
+            // Self-destruct after sound finishes (plus a small buffer)
+            float clipLength = explosionSound != null ? explosionSound.length : 2.0f;
+            Destroy(audioObject, clipLength + 0.5f);
+            
+            Debug.Log("Playing EXTRA LOUD explosion sound at volume 3.0");
         }
         
         // Apply damage to objects in radius
