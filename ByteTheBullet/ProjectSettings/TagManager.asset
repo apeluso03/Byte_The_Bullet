@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Grenade
-  - Weapoin
+  - PlayerWeapon
   layers:
   - Default
   - TransparentFX
@@ -54,6 +54,9 @@ TagManager:
     locked: 0
   - name: InFrontOfPlayer
     uniqueID: 1325572401
+    locked: 0
+  - name: Hands
+    uniqueID: 2203606231
     locked: 0
   m_RenderingLayers:
   - Default

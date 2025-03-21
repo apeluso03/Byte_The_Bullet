@@ -385,6 +385,11 @@ MonoBehaviour:
   debugColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   leftHandVisual: {fileID: 415550714}
   rightHandVisual: {fileID: 370131244}
+  hideWeaponWhenAimingUp: 1
+  upDirectionThreshold: 0.8
+  layerSwitchBuffer: 0.05
+  behindPlayerLayer: BehindPlayer
+  inFrontOfPlayerLayer: InFrontOfPlayer
 --- !u!212 &378635428
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -557,6 +562,7 @@ GameObject:
   - component: {fileID: 1741796043}
   - component: {fileID: 1741796049}
   - component: {fileID: 1741796048}
+  - component: {fileID: 1741796050}
   m_Layer: 0
   m_Name: player
   m_TagString: Untagged
@@ -581,6 +587,7 @@ MonoBehaviour:
   deceleration: 50
   animator: {fileID: 0}
   characterSprite: {fileID: 0}
+  moveDirection: {x: 0, y: 0}
 --- !u!61 &1741796044
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -740,6 +747,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1741796049}
   weaponAiming: {fileID: 378635427}
+  playerMovement: {fileID: 0}
+  aimInfluence: 1
+  lastLookDirection: {x: 0, y: -1}
 --- !u!95 &1741796049
 Animator:
   serializedVersion: 7
@@ -762,6 +772,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1741796050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1741796042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1951a25c0db2ce04bbfec483748436c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dodgeSpeed: 15
+  dodgeDuration: 0.2
+  dodgeCooldown: 0.8
+  idleDodgeDistanceMultiplier: 1.2
+  idleDodgeInAimDirection: 1
+  allowBackwardDodge: 0
+  backwardDodgeAngle: 120
+  dodgeTrailEffect: {fileID: 0}
+  trailDuration: 0.3
+  weaponAiming: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
