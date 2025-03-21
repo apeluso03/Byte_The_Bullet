@@ -36,6 +36,10 @@ public class PlayerDodge : MonoBehaviour
     private float cooldownTimer = 0f;
     private Vector2 dodgeDirection;
     
+    // Add these fields
+    private PlayerInventory inventory;
+    private WeaponAiming currentWeapon;
+    
     void Start()
     {
         playerMovement = GetComponent<PlayerMovement>();
@@ -43,13 +47,29 @@ public class PlayerDodge : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         
+        // Get inventory component
+        inventory = GetComponent<PlayerInventory>();
+        
+        // Listen for weapon changes if inventory exists
+        if (inventory != null)
+        {
+            inventory.OnWeaponChanged += HandleWeaponChanged;
+        }
+        else
+        {
+            Debug.LogWarning("PlayerInventory not found! Weapon effects during dodge may not work correctly.");
+            
+            // Fallback to direct search
+            currentWeapon = GetComponentInChildren<WeaponAiming>();
+        }
+        
         // Try to get the reference if not assigned in inspector
         if (weaponAiming == null)
         {
-            weaponAiming = GetComponentInChildren<WeaponAiming>(true);
+            weaponAiming = GetComponentInChildren<WeaponAiming>();
             if (weaponAiming == null)
             {
-                weaponAiming = FindObjectOfType<WeaponAiming>();
+                weaponAiming = FindAnyObjectByType<WeaponAiming>();
                 Debug.LogWarning("WeaponAiming not found in children, searching scene...");
             }
         }
@@ -57,7 +77,7 @@ public class PlayerDodge : MonoBehaviour
         Debug.Log("WeaponAiming reference: " + (weaponAiming != null));
         if (weaponAiming == null)
         {
-            Debug.LogError("WeaponAiming component not found! Make sure it's attached to the player or its children.");
+            Debug.Log("No WeaponAiming found - weapon effects during dodge will be ignored");
         }
     }
     
@@ -222,10 +242,10 @@ public class PlayerDodge : MonoBehaviour
     IEnumerator PerformDodge()
     {
         // Hide the weapon
-        if (weaponAiming != null)
+        if (currentWeapon != null)
         {
             Debug.Log("Hiding weapon");
-            weaponAiming.SetWeaponVisible(false);
+            currentWeapon.SetWeaponVisible(false);
         }
         
         // Save original state
@@ -266,10 +286,10 @@ public class PlayerDodge : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         
         // Show the weapon again
-        if (weaponAiming != null)
+        if (currentWeapon != null)
         {
             Debug.Log("Showing weapon");
-            weaponAiming.SetWeaponVisible(true);
+            currentWeapon.SetWeaponVisible(true);
         }
         
         // Restore original movement control
@@ -285,5 +305,24 @@ public class PlayerDodge : MonoBehaviour
     public bool IsDodging()
     {
         return isDodging;
+    }
+    
+    // Method to handle weapon changes
+    private void HandleWeaponChanged(int index)
+    {
+        // Update current weapon reference when weapon changes
+        if (inventory != null && index >= 0 && index < inventory.weaponSlots.Length)
+        {
+            currentWeapon = inventory.weaponSlots[index];
+        }
+    }
+    
+    // Don't forget to clean up event listeners
+    void OnDestroy()
+    {
+        if (inventory != null)
+        {
+            inventory.OnWeaponChanged -= HandleWeaponChanged;
+        }
     }
 }

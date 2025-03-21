@@ -22,9 +22,9 @@ public class CharacterAnimator : MonoBehaviour
     public Vector2 lastLookDirection = Vector2.down; // Default to down
     
     // New parameters for dodge animations
-    private readonly string dodgeTriggerParam = "Dodge";
-    private readonly string dodgeXParam = "DodgeX";
-    private readonly string dodgeYParam = "DodgeY";
+    [SerializeField] private string dodgeTriggerParam = "dodge";
+    [SerializeField] private string dodgeXParam = "dodgeX";
+    [SerializeField] private string dodgeYParam = "dodgeY";
     
     // Reference to dodge component
     private PlayerDodge playerDodge;

@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector]
     public Vector2 moveDirection; // Make this public so CharacterAnimator can access it
     private Vector2 currentVelocity;
-    private bool isFacingRight = true;
+    [SerializeField] private bool isFacingRight = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
