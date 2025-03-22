@@ -125,6 +125,11 @@ public class WeaponCreatorWindow : EditorWindow
     
     private void OnGUI()
     {
+        // Completely disconnect the GUI operations from the creation method
+        // to avoid the possibility of layout group errors
+        Event e = Event.current;
+        
+        // Use a simpler layout approach
         EditorGUILayout.BeginVertical();
         
         EditorGUILayout.LabelField("Weapon Creator", EditorStyles.boldLabel);
@@ -132,14 +137,13 @@ public class WeaponCreatorWindow : EditorWindow
         
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
         
-        // Basic Properties Section
+        // ---- Basic Properties ----
         EditorGUILayout.LabelField("Weapon Properties", EditorStyles.boldLabel);
-        
         weaponName = EditorGUILayout.TextField("Weapon Name", weaponName);
         weaponSprite = (Sprite)EditorGUILayout.ObjectField("Weapon Sprite", weaponSprite, typeof(Sprite), false);
         weaponType = (WeaponType)EditorGUILayout.EnumPopup("Weapon Type", weaponType);
         
-        // Draw rarity with color indicators
+        // Rarity with color indicators
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel("Weapon Rarity");
         
@@ -158,11 +162,9 @@ public class WeaponCreatorWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
         
         fireType = (WeaponFireType)EditorGUILayout.EnumPopup("Fire Type", fireType);
-        
-        // Add dropdown for damage type
         damageTypeIndex = EditorGUILayout.Popup("Damage Type", damageTypeIndex, damageTypes);
         
-        // Stat sliders for metadata values
+        // ---- Weapon Stats ----
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Weapon Stats", EditorStyles.boldLabel);
         
@@ -172,9 +174,8 @@ public class WeaponCreatorWindow : EditorWindow
         weaponReloadTime = EditorGUILayout.Slider("Reload Time", weaponReloadTime, 0.5f, 5f);
         weaponAccuracy = EditorGUILayout.Slider("Accuracy", weaponAccuracy, 0f, 1f);
         
+        // ---- References ----
         EditorGUILayout.Space();
-        
-        // Automatic reference section
         EditorGUILayout.LabelField("Auto-References", EditorStyles.boldLabel);
         
         playerTransform = (Transform)EditorGUILayout.ObjectField("Player", playerTransform, typeof(Transform), true);
@@ -188,33 +189,27 @@ public class WeaponCreatorWindow : EditorWindow
             FindReferences();
         }
         
+        // ---- Creation Options ----
         EditorGUILayout.Space();
-        
-        // Creation Options
         EditorGUILayout.LabelField("Creation Options", EditorStyles.boldLabel);
         createPrefab = EditorGUILayout.Toggle("Create Prefab", createPrefab);
         
-        EditorGUILayout.Space();
-        
-        // Preview section
+        // ---- Preview ----
         if (weaponSprite != null)
         {
+            EditorGUILayout.Space();
             EditorGUILayout.LabelField("Preview", EditorStyles.boldLabel);
             
-            // Draw a box with the sprite preview
             Rect previewRect = GUILayoutUtility.GetRect(100, 100, GUILayout.ExpandWidth(true));
-            
-            // Color the background based on rarity
             EditorGUI.DrawRect(previewRect, new Color(0.1f, 0.1f, 0.1f, 1));
             
-            // Calculate sprite dimensions preserving aspect ratio
+            // Draw sprite with proper aspect ratio
             float spriteAspect = weaponSprite.rect.width / weaponSprite.rect.height;
             float previewAspect = previewRect.width / previewRect.height;
             
             Rect spriteRect;
             if (spriteAspect > previewAspect)
             {
-                // Wider than tall, constrain width
                 float height = previewRect.width / spriteAspect;
                 spriteRect = new Rect(
                     previewRect.x,
@@ -225,7 +220,6 @@ public class WeaponCreatorWindow : EditorWindow
             }
             else
             {
-                // Taller than wide, constrain height
                 float width = previewRect.height * spriteAspect;
                 spriteRect = new Rect(
                     previewRect.x + (previewRect.width - width) / 2,
@@ -235,7 +229,6 @@ public class WeaponCreatorWindow : EditorWindow
                 );
             }
             
-            // Draw the sprite
             GUI.DrawTextureWithTexCoords(
                 spriteRect,
                 weaponSprite.texture,
@@ -248,18 +241,25 @@ public class WeaponCreatorWindow : EditorWindow
             );
         }
         
-        EditorGUILayout.Space();
+        // End scroll view
+        EditorGUILayout.EndScrollView();
         
-        // Create button
+        // Create button, outside of scroll view
         GUI.backgroundColor = Color.green;
-        if (GUILayout.Button("Create Weapon GameObject", GUILayout.Height(40)))
-        {
-            CreateWeaponObject();
-        }
+        bool createPressed = GUILayout.Button("Create Weapon GameObject", GUILayout.Height(40));
         GUI.backgroundColor = originalColor;
         
-        EditorGUILayout.EndScrollView();
+        // End vertical layout
         EditorGUILayout.EndVertical();
+        
+        // Handle create button click after all GUI layout is done
+        if (createPressed)
+        {
+            // Delay the creation to avoid interfering with GUI layout
+            EditorApplication.delayCall += () => {
+                CreateWeaponObject();
+            };
+        }
     }
     
     private void CreateWeaponObject()
@@ -311,62 +311,6 @@ public class WeaponCreatorWindow : EditorWindow
             weaponAiming.rightHandVisual = rightHandVisual;
         }
         
-        // Add weapon pickup component
-        try
-        {
-            // Try to find the weapon pickup component type
-            System.Type pickupType = null;
-            
-            // First try with assembly-qualified type names
-            var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                pickupType = assembly.GetType("WeaponPickupItem");
-                if (pickupType != null) break;
-                
-                pickupType = assembly.GetType("WeaponPickup");
-                if (pickupType != null) break;
-            }
-            
-            // If still not found, try getting from a component in the scene
-            if (pickupType == null)
-            {
-                var existingPickups = FindObjectsOfType<MonoBehaviour>();
-                foreach (var component in existingPickups)
-                {
-                    if (component.GetType().Name == "WeaponPickupItem" || 
-                        component.GetType().Name == "WeaponPickup")
-                    {
-                        pickupType = component.GetType();
-                        break;
-                    }
-                }
-            }
-            
-            if (pickupType != null)
-            {
-                // Add the pickup component
-                Component pickup = weaponObject.AddComponent(pickupType);
-                Debug.Log($"Added pickup component of type: {pickupType.Name}");
-                
-                // Try to set the weaponPrefab field using reflection
-                var field = pickupType.GetField("weaponPrefab");
-                if (field != null)
-                {
-                    // Will be set to the prefab later
-                    field.SetValue(pickup, null);
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Couldn't find WeaponPickupItem or WeaponPickup types in the project");
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"Failed to add weapon pickup component: {e.Message}");
-        }
-        
         // Add weapon metadata component with our values
         WeaponMetadata metadata = weaponObject.AddComponent<WeaponMetadata>();
         metadata.weaponName = weaponName;
@@ -382,8 +326,71 @@ public class WeaponCreatorWindow : EditorWindow
         metadata.reloadTime = weaponReloadTime;
         metadata.accuracy = weaponAccuracy;
         
+        // Add appropriate shooting component based on weapon type
+        switch (weaponType)
+        {
+            case WeaponType.Shotgun:
+                // Add only the ShotgunShooting component (not both)
+                ShotgunShooting shotgun = weaponObject.AddComponent<ShotgunShooting>();
+                ConfigureShotgun(shotgun, metadata);
+                break;
+            
+            case WeaponType.Pistol:
+            case WeaponType.SMG:
+            case WeaponType.AssaultRifle:
+            case WeaponType.SniperRifle:
+            default:
+                // Use base weapon shooting for other types
+                WeaponShooting shooting = weaponObject.AddComponent<WeaponShooting>();
+                ConfigureBaseWeapon(shooting, metadata);
+                break;
+        }
+        
         // Generate a simple description based on properties
         metadata.description = $"A {weaponRarity.ToString().ToLower()} {weaponType.ToString().ToLower()} that deals {damageTypes[damageTypeIndex].ToLower()} damage.";
+        
+        // Add weapon pickup component
+        try
+        {
+            // Check if SimpleWeaponPickup exists in the project
+            System.Type pickupType = System.Type.GetType("SimpleWeaponPickup");
+            
+            if (pickupType == null)
+            {
+                // Try looking in all loaded assemblies
+                var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+                foreach (var assembly in assemblies)
+                {
+                    pickupType = assembly.GetType("SimpleWeaponPickup");
+                    if (pickupType != null) break;
+                }
+            }
+            
+            if (pickupType != null)
+            {
+                // Add the pickup component if found
+                Component pickup = weaponObject.AddComponent(pickupType);
+                Debug.Log($"Added pickup component of type: {pickupType.Name}");
+                
+                // Try to set the weaponPrefab field using reflection
+                var field = pickupType.GetField("weaponPrefab");
+                if (field != null)
+                {
+                    // Will be set to the prefab later
+                    field.SetValue(pickup, null);
+                }
+            }
+            else
+            {
+                // Create a simple weapon pickup component if you want
+                // or just skip this if you don't need it yet
+                Debug.Log("No weapon pickup component found. Skipping pickup setup.");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Failed to add weapon pickup component: {e.Message}");
+        }
         
         // Position the weapon in the scene view
         SceneView sceneView = SceneView.lastActiveSceneView;
@@ -469,6 +476,152 @@ public class WeaponCreatorWindow : EditorWindow
         
         // Close the window
         Close();
+    }
+    
+    // Helper method to configure shotgun-specific settings
+    private void ConfigureShotgun(ShotgunShooting shotgun, WeaponMetadata metadata)
+    {
+        // Create a fire point
+        GameObject firePointObj = new GameObject("FirePoint");
+        firePointObj.transform.SetParent(shotgun.transform);
+        firePointObj.transform.localPosition = new Vector3(0.5f, 0, 0);
+        shotgun.firePoint = firePointObj.transform;
+        
+        // Set up shotgun specific settings based on metadata
+        shotgun.projectileSpeed = 15f; // Slightly slower for shotgun pellets
+        
+        // Adjust pellet count based on weapon type variant
+        if (metadata.weaponType.Contains("Sawed"))
+        {
+            shotgun.pelletCount = 12;      // More pellets for sawed-off
+            shotgun.spreadAngle = 30f;     // Wider spread
+        }
+        else
+        {
+            shotgun.pelletCount = 8;       // Default pellet count
+            shotgun.spreadAngle = Mathf.Lerp(45f, 15f, metadata.accuracy); // Adjust spread based on accuracy
+        }
+        
+        // Set firing properties based on the fire type
+        switch (fireType)
+        {
+            case WeaponFireType.SemiAuto:
+                shotgun.fireMode = ShotgunShooting.FireMode.SemiAuto;
+                shotgun.semiAutoFireDelay = 0.8f;
+                break;
+            
+            case WeaponFireType.FullAuto:
+                shotgun.fireMode = ShotgunShooting.FireMode.FullAuto;
+                shotgun.fullAutoFireRate = 5.0f; // Increased to 5 shots per second for better full-auto feel
+                break;
+            
+            case WeaponFireType.Burst:
+                shotgun.fireMode = ShotgunShooting.FireMode.Burst;
+                shotgun.burstCount = 2;
+                shotgun.burstDelay = 0.2f;
+                shotgun.burstCooldown = 0.8f;
+                break;
+            
+            case WeaponFireType.Charged:
+                shotgun.fireMode = ShotgunShooting.FireMode.Charged;
+                shotgun.chargeTime = 1.5f;
+                shotgun.maxChargedPelletCount = 16;
+                shotgun.chargedShotCooldown = 1.2f;
+                break;
+            
+            default:
+                shotgun.fireMode = ShotgunShooting.FireMode.SemiAuto;
+                shotgun.semiAutoFireDelay = 0.8f;
+                break;
+        }
+        
+        // Try to locate common projectile prefabs in the project
+        if (shotgun.projectilePrefab == null)
+        {
+            // Look for projectile assets in common folders
+            string[] pelletGuids = AssetDatabase.FindAssets("t:Prefab Pellet");
+            if (pelletGuids.Length > 0)
+            {
+                string pelletPath = AssetDatabase.GUIDToAssetPath(pelletGuids[0]);
+                shotgun.projectilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(pelletPath);
+            }
+            else
+            {
+                string[] bulletGuids = AssetDatabase.FindAssets("t:Prefab Bullet");
+                if (bulletGuids.Length > 0)
+                {
+                    string bulletPath = AssetDatabase.GUIDToAssetPath(bulletGuids[0]);
+                    shotgun.projectilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(bulletPath);
+                }
+            }
+        }
+        
+        // Try to locate shell casing prefab
+        string[] shellGuids = AssetDatabase.FindAssets("t:Prefab Shell");
+        if (shellGuids.Length > 0)
+        {
+            string shellPath = AssetDatabase.GUIDToAssetPath(shellGuids[0]);
+            shotgun.shellCasingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(shellPath);
+        }
+        
+        // Try to locate sound effects
+        string[] pumpGuids = AssetDatabase.FindAssets("t:AudioClip Pump");
+        if (pumpGuids.Length > 0)
+        {
+            string pumpPath = AssetDatabase.GUIDToAssetPath(pumpGuids[0]);
+            shotgun.pumpSound = AssetDatabase.LoadAssetAtPath<AudioClip>(pumpPath);
+        }
+        
+        // Try to locate charge sounds if using charged mode
+        if (shotgun.fireMode == ShotgunShooting.FireMode.Charged)
+        {
+            string[] chargeGuids = AssetDatabase.FindAssets("t:AudioClip Charge");
+            if (chargeGuids.Length > 0)
+            {
+                string chargePath = AssetDatabase.GUIDToAssetPath(chargeGuids[0]);
+                shotgun.chargeSound = AssetDatabase.LoadAssetAtPath<AudioClip>(chargePath);
+            }
+            
+            string[] releaseGuids = AssetDatabase.FindAssets("t:AudioClip Release");
+            if (releaseGuids.Length > 0)
+            {
+                string releasePath = AssetDatabase.GUIDToAssetPath(releaseGuids[0]);
+                shotgun.chargeReleaseSound = AssetDatabase.LoadAssetAtPath<AudioClip>(releasePath);
+            }
+        }
+    }
+    
+    // Helper method to configure base weapon shooting component
+    private void ConfigureBaseWeapon(WeaponShooting shooting, WeaponMetadata metadata)
+    {
+        // Create a fire point
+        GameObject firePointObj = new GameObject("FirePoint");
+        firePointObj.transform.SetParent(shooting.transform);
+        firePointObj.transform.localPosition = new Vector3(0.5f, 0, 0);
+        shooting.firePoint = firePointObj.transform;
+        
+        // Configure based on weapon type
+        switch (metadata.weaponType)
+        {
+            case "Pistol":
+                shooting.projectileSpeed = 20f;
+                break;
+            case "SMG":
+                shooting.projectileSpeed = 25f;
+                break;
+            case "AssaultRifle":
+                shooting.projectileSpeed = 30f;
+                break;
+            case "SniperRifle":
+                shooting.projectileSpeed = 40f;
+                break;
+            default:
+                shooting.projectileSpeed = 20f;
+                break;
+        }
+        
+        // Set fire rate from metadata
+        shooting.fireRate = metadata.fireRate;
     }
     
     // Make sure WeaponMetadata exists

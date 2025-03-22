@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Grenade
   - PlayerWeapon
+  - Projectile
   layers:
   - Default
   - TransparentFX

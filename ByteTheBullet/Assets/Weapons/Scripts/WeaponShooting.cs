@@ -23,13 +23,13 @@ public class WeaponShooting : MonoBehaviour
     [Tooltip("Optional sound effect for shooting")]
     public AudioClip shootSound;
     
-    // Private references
-    private WeaponAiming weaponAiming;
-    private WeaponMetadata weaponMetadata;
-    private AudioSource audioSource;
-    private float nextFireTime = 0f;
+    // Change these to protected so derived classes can access them
+    protected WeaponAiming weaponAiming;
+    protected WeaponMetadata weaponMetadata;
+    protected AudioSource audioSource;
+    protected float nextFireTime = 0f;
     
-    void Awake()
+    protected virtual void Awake()
     {
         // Get component references
         weaponAiming = GetComponent<WeaponAiming>();
@@ -59,7 +59,7 @@ public class WeaponShooting : MonoBehaviour
         }
     }
     
-    void Update()
+    protected virtual void Update()
     {
         // Only shoot if weapon is equipped by player
         if (!weaponAiming.isEquipped) return;
@@ -72,7 +72,7 @@ public class WeaponShooting : MonoBehaviour
         }
     }
     
-    public void Shoot()
+    public virtual void Shoot()
     {
         // Spawn projectile at fire point
         if (projectilePrefab != null && firePoint != null)
@@ -126,8 +126,8 @@ public class WeaponShooting : MonoBehaviour
         }
     }
     
-    // Draw the fire point in the editor
-    void OnDrawGizmosSelected()
+    // Changed from void to protected virtual void
+    protected virtual void OnDrawGizmosSelected()
     {
         if (firePoint != null)
         {
