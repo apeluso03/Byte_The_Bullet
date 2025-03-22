@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      shotgun_pellet_004_0: 228665436534012029
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

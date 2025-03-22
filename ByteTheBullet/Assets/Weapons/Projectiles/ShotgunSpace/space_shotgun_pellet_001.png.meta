@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      space_shotgun_pellet_001_0: 4784195043776754271
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

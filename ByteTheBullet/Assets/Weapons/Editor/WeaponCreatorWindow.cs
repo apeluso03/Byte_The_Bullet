@@ -5,12 +5,12 @@ using Weapons;
 
 public class WeaponCreatorWindow : EditorWindow
 {
+    // Basic settings
+    private string weaponName = "New Shotgun";
+    
     // Weapon type selection
     private string[] weaponTypes = new string[] { "Shotgun" };
     private int selectedWeaponType = 0;
-    
-    // Basic settings
-    private string weaponName = "New Shotgun";
     
     // Rarity dropdown options
     private string[] rarityOptions = new string[] { 
@@ -72,11 +72,11 @@ public class WeaponCreatorWindow : EditorWindow
         EditorGUILayout.LabelField("Weapon Basics", EditorStyles.boldLabel);
         EditorGUI.indentLevel++;
         
-        // Weapon type selection
-        selectedWeaponType = EditorGUILayout.Popup("Weapon Type", selectedWeaponType, weaponTypes);
-        
         // Weapon name field
         weaponName = EditorGUILayout.TextField("Weapon Name", weaponName);
+        
+        // Weapon type selection
+        selectedWeaponType = EditorGUILayout.Popup("Weapon Type", selectedWeaponType, weaponTypes);
         
         // Rarity dropdown with color indication
         EditorGUILayout.BeginHorizontal();
