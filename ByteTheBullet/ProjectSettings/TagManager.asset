@@ -59,5 +59,8 @@ TagManager:
   - name: Hands
     uniqueID: 2203606231
     locked: 0
+  - name: Projectiles
+    uniqueID: 3108220185
+    locked: 0
   m_RenderingLayers:
   - Default
