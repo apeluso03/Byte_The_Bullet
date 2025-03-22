@@ -9,4 +9,12 @@ public static class CreateWeaponMenuItem
         // Open the weapon creator window
         WeaponCreatorWindow.ShowWindow();
     }
+    
+    [MenuItem("GameObject/2D Object/Weapons/Shotgun", false, 10)]
+    public static void CreateShotgunGameObject()
+    {
+        // Open the weapon creator window with shotgun pre-selected
+        WeaponCreatorWindow window = EditorWindow.GetWindow<WeaponCreatorWindow>("Weapon Creator");
+        // The shotgun is already selected by default (index 0)
+    }
 } 
