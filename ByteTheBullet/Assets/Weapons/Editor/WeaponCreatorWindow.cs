@@ -9,7 +9,7 @@ public class WeaponCreatorWindow : EditorWindow
     private string weaponName = "New Shotgun";
     
     // Weapon type selection
-    private string[] weaponTypes = new string[] { "Shotgun" };
+    private string[] weaponTypes = new string[] { "Shotgun", "Beam Weapon" };
     private int selectedWeaponType = 0;
     
     // Rarity dropdown options
@@ -38,6 +38,12 @@ public class WeaponCreatorWindow : EditorWindow
     // Auto-reference settings
     private bool autoFindReferences = true;
     private GameObject playerGameObject;
+    
+    // New variables
+    private Vector3 currentAimDirection;
+    [Tooltip("Distance between beam sections for physics calculations")]
+    [Range(0.1f, 1.0f)]
+    public float beamSectionDistance = 0.3f;
     
     [MenuItem("Tools/Weapons/Weapon Creator")]
     public static void ShowWindow()
@@ -179,7 +185,7 @@ public class WeaponCreatorWindow : EditorWindow
                 "You haven't assigned a sprite. Continue anyway?", "Yes", "No"))
             {
             return;
-            }
+        }
         }
         
         // Try to find player if it's null and auto-find is enabled
@@ -197,6 +203,9 @@ public class WeaponCreatorWindow : EditorWindow
             case 0: // Shotgun
                 CreateShotgunWeapon();
                 break;
+            case 1: // Beam Weapon
+                CreateBeamWeapon();
+                break;
             default:
                 Debug.LogError("Unknown weapon type selected");
                 break;
@@ -211,9 +220,9 @@ public class WeaponCreatorWindow : EditorWindow
         // Add a sprite renderer if we have a sprite
         if (weaponSprite != null)
         {
-            SpriteRenderer spriteRenderer = weaponObject.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = weaponSprite;
-            spriteRenderer.sortingLayerName = "InFrontOfPlayer";
+        SpriteRenderer spriteRenderer = weaponObject.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = weaponSprite;
+        spriteRenderer.sortingLayerName = "InFrontOfPlayer";
             spriteRenderer.sortingOrder = 10;
             
             // Apply rarity color tint
@@ -305,6 +314,133 @@ public class WeaponCreatorWindow : EditorWindow
         if (playerGameObject == null)
         {
             message += "⚠️ Player reference not found. You need to manually set up the WeaponAiming component.\n\n";
+            }
+            else
+            {
+            bool missingReferences = false;
+            if (aiming.weaponPointLeft == null || aiming.weaponPointRight == null)
+            {
+                message += "⚠️ Some weapon points could not be found. Check the WeaponAiming component.\n\n";
+                missingReferences = true;
+            }
+            
+            if (!missingReferences)
+            {
+                message += "✓ All player references were set up successfully!\n\n";
+            }
+        }
+        
+        message += "The weapon has been selected in the hierarchy.\nAdjust its settings in the Inspector!";
+        
+        // Notify the user
+        EditorUtility.DisplayDialog("Weapon Created", message, "OK");
+    }
+    
+    private void CreateBeamWeapon()
+    {
+        // Create the weapon GameObject
+        GameObject weaponObject = new GameObject(weaponName);
+        
+        // Add a sprite renderer if we have a sprite
+        if (weaponSprite != null)
+        {
+            SpriteRenderer spriteRenderer = weaponObject.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = weaponSprite;
+            spriteRenderer.sortingLayerName = "InFrontOfPlayer";
+            spriteRenderer.sortingOrder = 10;
+            
+            // Apply rarity color tint
+            spriteRenderer.color = Color.Lerp(Color.white, rarityColors[selectedRarity], 0.3f);
+            
+            // Add a collider if required
+            if (addCollider)
+            {
+                BoxCollider2D collider = weaponObject.AddComponent<BoxCollider2D>();
+                if (weaponSprite != null)
+                {
+                    collider.size = weaponSprite.bounds.size;
+                }
+            }
+        }
+        
+        // Add audio source (required by BaseWeapon)
+        AudioSource audioSource = weaponObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        
+        // Add the weapon aiming component
+        WeaponAiming aiming = weaponObject.AddComponent<WeaponAiming>();
+        
+        // Set up weapon aiming references if possible
+        if (playerGameObject != null)
+        {
+            // Set player reference
+            aiming.player = playerGameObject.transform;
+            
+            // Find weapon points
+            Transform leftPoint = playerGameObject.transform.Find("WeaponPoint_Left");
+            Transform rightPoint = playerGameObject.transform.Find("WeaponPoint_Right");
+            
+            if (leftPoint != null)
+            {
+                aiming.weaponPointLeft = leftPoint;
+                aiming.leftHandVisual = leftPoint.gameObject;
+            }
+            
+            if (rightPoint != null)
+            {
+                aiming.weaponPointRight = rightPoint;
+                aiming.rightHandVisual = rightPoint.gameObject;
+            }
+            
+            // Set layering settings
+            aiming.behindPlayerLayer = "BehindPlayer";
+            aiming.inFrontOfPlayerLayer = "InFrontOfPlayer";
+        }
+        
+        // Create a FirePoint child object
+        GameObject firePoint = new GameObject("FirePoint");
+        firePoint.transform.SetParent(weaponObject.transform);
+        firePoint.transform.localPosition = new Vector3(0.5f, 0, 0);
+        
+        // Add the metadata component
+        WeaponMetadata metadata = weaponObject.AddComponent<WeaponMetadata>();
+        metadata.weaponName = weaponName;
+        metadata.weaponType = "Beam";
+        metadata.rarity = rarityOptions[selectedRarity];
+        metadata.fireType = "Beam";
+        metadata.damageType = "Energy";
+        metadata.description = weaponDescription;
+        
+        // Default values for beam weapon
+        float defaultDamage = 30f; // Damage per second for beam
+        int defaultEnergy = 100;
+        float defaultRegenRate = 15f;
+        
+        metadata.damage = defaultDamage;
+        metadata.fireRate = defaultRegenRate;
+        metadata.magazineSize = defaultEnergy;
+        
+        // Add the beam weapon component
+        BeamWeapon beamWeapon = weaponObject.AddComponent<BeamWeapon>();
+        beamWeapon.damage = defaultDamage;
+        beamWeapon.beamDamagePerSecond = defaultDamage;
+        beamWeapon.maxEnergy = defaultEnergy;
+        beamWeapon.CurrentEnergy = defaultEnergy;
+        beamWeapon.energyRegenRate = defaultRegenRate;
+        
+        // Set beam color based on rarity
+        beamWeapon.beamColor = rarityColors[selectedRarity];
+        beamWeapon.firePoint = firePoint.transform;
+        
+        // Select the created weapon
+        Selection.activeGameObject = weaponObject;
+        
+        // Create message
+        string message = $"{weaponName} has been created successfully!\n\n";
+        
+        if (playerGameObject == null)
+        {
+            message += "⚠️ Player reference not found. You need to manually set up the WeaponAiming component.\n\n";
         }
         else
         {
@@ -321,7 +457,7 @@ public class WeaponCreatorWindow : EditorWindow
             }
         }
         
-        message += "The weapon has been selected in the hierarchy.\nAdjust its settings in the Inspector!";
+        message += "The weapon has been selected in the hierarchy.\nAdjust its beam settings in the Inspector!";
         
         // Notify the user
         EditorUtility.DisplayDialog("Weapon Created", message, "OK");
