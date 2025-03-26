@@ -8,15 +8,73 @@ namespace Weapons
     [System.Serializable]
     public class BeamWeaponConfig
     {
+        // Define the possible beam fire modes
+        public enum BeamFireMode
+        {
+            Continuous,  // Standard continuous beam
+            ChargeBurst  // Hold to charge, automatically fires burst when charged
+        }
+        
+        [Header("Beam Fire Modes")]
+        [Tooltip("The firing pattern of the beam weapon")]
+        public BeamFireMode fireMode = BeamFireMode.Continuous;
+        
+        [Tooltip("For charge burst mode: maximum damage multiplier when fully charged")]
+        [Range(1f, 5f)]
+        public float maxChargeDamageMultiplier = 2.5f;
+        
+        [Tooltip("For charge burst mode: time to reach maximum charge")]
+        [Range(0.5f, 3f)]
+        public float maxChargeTime = 1.5f;
+        
+        [Tooltip("For charge burst mode: how long the burst beam fires")]
+        [Range(0.1f, 2.0f)]
+        public float burstDuration = 0.5f;
+        
         [Header("Beam Energy")]
         [Tooltip("Maximum energy capacity")]
         public float maxEnergy = 100f;
         
+        [Tooltip("Energy drain per second while firing beam")]
+        public float energyDrainRate = 20f;
+        
+        [Header("Energy System")]
+        [Tooltip("How the beam's energy is replenished")]
+        public EnergySystemType energySystemType = EnergySystemType.AutoRecharge;
+        
+        // Define the energy system types
+        public enum EnergySystemType
+        {
+            AutoRecharge,  // Energy regenerates over time automatically
+            BatteryReload  // Requires manual reload with batteries
+        }
+        
+        [Header("Auto-Recharge Settings")]
         [Tooltip("Energy regeneration rate per second when not firing")]
         public float energyRegenRate = 15f;
         
-        [Tooltip("Energy drain per second while firing beam")]
-        public float energyDrainRate = 20f;
+        [Header("Battery Reload Settings")]
+        [Tooltip("Maximum number of batteries that can be carried")]
+        public int maxBatteryCount = 5;
+        
+        [Tooltip("Current number of batteries")]
+        [SerializeField] private int currentBatteryCount = 3;
+        
+        [Tooltip("Energy contained in each battery")]
+        public float energyPerBattery = 50f;
+        
+        [Tooltip("Time required to reload a battery")]
+        public float batteryReloadTime = 2.0f;
+        
+        [Tooltip("Automatically reload when energy is depleted")]
+        public bool autoReloadWhenDepleted = true;
+        
+        // Property to access current battery count
+        public int CurrentBatteryCount
+        {
+            get => currentBatteryCount;
+            set => currentBatteryCount = Mathf.Clamp(value, 0, maxBatteryCount);
+        }
         
         [Header("Beam Properties")]
         [Tooltip("Maximum distance the beam can reach")]

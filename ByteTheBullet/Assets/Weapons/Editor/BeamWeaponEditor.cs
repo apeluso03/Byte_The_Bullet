@@ -86,22 +86,30 @@ namespace Weapons.Editor
             EditorGUI.indentLevel++;
             
             // Draw the name property
-            string oldName = beamWeapon.weaponName;
+            string oldName = weaponNameProperty.stringValue;
             
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(weaponNameProperty);
             
-            if (EditorGUI.EndChangeCheck() && beamWeapon.weaponName != oldName)
+            if (EditorGUI.EndChangeCheck())
             {
-                // Also update the GameObject name to match
-                Undo.RecordObject(beamWeapon.gameObject, "Change GameObject Name");
-                beamWeapon.gameObject.name = beamWeapon.weaponName;
-                EditorUtility.SetDirty(beamWeapon.gameObject);
+                // Apply this specific property change immediately
+                serializedObject.ApplyModifiedProperties();
                 
-                // Force scene save
-                if (!Application.isPlaying)
+                // Now get the new value and update GameObject name if it changed
+                string newName = weaponNameProperty.stringValue;
+                if (newName != oldName)
                 {
-                    UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(beamWeapon.gameObject.scene);
+                    // Also update the GameObject name to match
+                    Undo.RecordObject(beamWeapon.gameObject, "Change GameObject Name");
+                    beamWeapon.gameObject.name = newName;
+                    EditorUtility.SetDirty(beamWeapon.gameObject);
+                    
+                    // Force scene save
+                    if (!Application.isPlaying)
+                    {
+                        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(beamWeapon.gameObject.scene);
+                    }
                 }
             }
             
@@ -169,22 +177,101 @@ namespace Weapons.Editor
                 
                 EditorGUILayout.EndHorizontal();
                 
-                // Energy config settings
-                // Max energy setting
+                // Energy system type dropdown
+                SerializedProperty energySystemTypeProp = configProperty.FindPropertyRelative("energySystemType");
+                EditorGUILayout.PropertyField(energySystemTypeProp, new GUIContent("Energy System"));
+                
+                // Max energy setting (common to both systems)
                 SerializedProperty maxEnergyProp = configProperty.FindPropertyRelative("maxEnergy");
                 EditorGUILayout.PropertyField(maxEnergyProp, new GUIContent("Max Energy"));
                 
-                // Energy regen rate
-                SerializedProperty regenRateProp = configProperty.FindPropertyRelative("energyRegenRate");
-                EditorGUILayout.PropertyField(regenRateProp, new GUIContent("Energy Regen Rate"));
-                
-                // Energy drain rate
+                // Energy drain rate (common to both systems)
                 SerializedProperty drainRateProp = configProperty.FindPropertyRelative("energyDrainRate");
                 EditorGUILayout.PropertyField(drainRateProp, new GUIContent("Energy Drain Rate"));
                 
-                // Add a fill energy button in play mode
+                // Show relevant settings based on energy system type
+                BeamWeaponConfig.EnergySystemType selectedEnergySystem = 
+                    (BeamWeaponConfig.EnergySystemType)energySystemTypeProp.enumValueIndex;
+                
+                if (selectedEnergySystem == BeamWeaponConfig.EnergySystemType.AutoRecharge)
+                {
+                    EditorGUILayout.Space(5);
+                    EditorGUILayout.LabelField("Auto-Recharge Settings", EditorStyles.boldLabel);
+                    
+                    // Energy regen rate
+                    SerializedProperty regenRateProp = configProperty.FindPropertyRelative("energyRegenRate");
+                    EditorGUILayout.PropertyField(regenRateProp, new GUIContent("Energy Regen Rate"));
+                    
+                    if (Application.isPlaying)
+                    {
+                        EditorGUILayout.LabelField($"Energy will regenerate at {beamWeapon.config.energyRegenRate} units per second");
+                    }
+                }
+                else if (selectedEnergySystem == BeamWeaponConfig.EnergySystemType.BatteryReload)
+                {
+                    EditorGUILayout.Space(5);
+                    EditorGUILayout.LabelField("Battery Reload Settings", EditorStyles.boldLabel);
+                    
+                    // Battery settings
+                    SerializedProperty maxBatteryProp = configProperty.FindPropertyRelative("maxBatteryCount");
+                    SerializedProperty currentBatteryProp = configProperty.FindPropertyRelative("currentBatteryCount");
+                    SerializedProperty energyPerBatteryProp = configProperty.FindPropertyRelative("energyPerBattery");
+                    SerializedProperty reloadTimeProp = configProperty.FindPropertyRelative("batteryReloadTime");
+                    
+                    EditorGUILayout.PropertyField(maxBatteryProp, new GUIContent("Max Batteries"));
+                    EditorGUILayout.PropertyField(energyPerBatteryProp, new GUIContent("Energy Per Battery"));
+                    EditorGUILayout.PropertyField(reloadTimeProp, new GUIContent("Reload Time"));
+                    
+                    // Current battery count with progress bar
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.PrefixLabel("Batteries");
+                    
+                    // Progress bar for batteries
+                    int maxBatteries = beamWeapon.config.maxBatteryCount;
+                    int currentBatteries = beamWeapon.config.CurrentBatteryCount;
+                    
+                    Rect batteryProgressRect = EditorGUILayout.GetControlRect();
+                    EditorGUI.ProgressBar(batteryProgressRect, (float)currentBatteries / maxBatteries, $"{currentBatteries} / {maxBatteries}");
+                    
+                    EditorGUILayout.EndHorizontal();
+                    
+                    if (Application.isPlaying)
+                    {
+                        EditorGUILayout.LabelField($"Press R to reload a battery (+{beamWeapon.config.energyPerBattery} energy)");
+                        
+                        // Add reload battery button in play mode
+                        if (GUILayout.Button("Reload Battery"))
+                        {
+                            if (beamWeapon.config.CurrentBatteryCount > 0)
+                            {
+                                beamWeapon.StartCoroutine(beamWeapon.ReloadBattery());
+                            }
+                            else
+                            {
+                                Debug.Log("No batteries remaining!");
+                            }
+                        }
+                        
+                        // Add get more batteries button in play mode
+                        if (GUILayout.Button("Add Battery"))
+                        {
+                            if (beamWeapon.config.CurrentBatteryCount < beamWeapon.config.maxBatteryCount)
+                            {
+                                beamWeapon.config.CurrentBatteryCount++;
+                                EditorUtility.SetDirty(beamWeapon);
+                            }
+                            else
+                            {
+                                Debug.Log("Battery count already at maximum!");
+                            }
+                        }
+                    }
+                }
+                
+                // Add a fill energy button in play mode (common to both systems)
                 if (Application.isPlaying)
                 {
+                    EditorGUILayout.Space(5);
                     if (GUILayout.Button("Fill Energy"))
                     {
                         beamWeapon.CurrentEnergy = beamWeapon.config.maxEnergy;
@@ -205,6 +292,33 @@ namespace Weapons.Editor
             // Beam damage per second
             SerializedProperty beamDamagePerSecondProp = configProperty.FindPropertyRelative("beamDamagePerSecond");
             EditorGUILayout.PropertyField(beamDamagePerSecondProp, new GUIContent("Beam DPS"));
+            
+            EditorGUI.indentLevel--;
+            
+            // Fire Mode Settings
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Fire Mode Settings", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            
+            // Fire mode dropdown
+            SerializedProperty fireModeProp = configProperty.FindPropertyRelative("fireMode");
+            EditorGUILayout.PropertyField(fireModeProp, new GUIContent("Beam Fire Mode"));
+            
+            // Show relevant settings based on selected fire mode
+            BeamWeaponConfig.BeamFireMode selectedMode = (BeamWeaponConfig.BeamFireMode)fireModeProp.enumValueIndex;
+            
+            if (selectedMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
+            {
+                SerializedProperty maxChargeTimeProp = configProperty.FindPropertyRelative("maxChargeTime");
+                SerializedProperty maxChargeDmgMultProp = configProperty.FindPropertyRelative("maxChargeDamageMultiplier");
+                SerializedProperty burstDurationProp = configProperty.FindPropertyRelative("burstDuration");
+                
+                EditorGUILayout.PropertyField(maxChargeTimeProp, new GUIContent("Charge Time"));
+                EditorGUILayout.PropertyField(burstDurationProp, new GUIContent("Burst Duration"));
+                EditorGUILayout.PropertyField(maxChargeDmgMultProp, new GUIContent("Damage Multiplier"));
+                
+                EditorGUILayout.HelpBox("Hold fire button to charge. Beam will automatically fire when fully charged.", MessageType.Info);
+            }
             
             EditorGUI.indentLevel--;
             
@@ -293,10 +407,20 @@ namespace Weapons.Editor
                 EditorGUILayout.Space(10);
                 EditorGUILayout.LabelField("Test Controls (Play Mode Only)", EditorStyles.boldLabel);
                 
-                // Add energy regeneration rate display
-                EditorGUILayout.LabelField($"Energy Regeneration Rate: {beamWeapon.config.energyRegenRate}/sec");
+                // Display appropriate energy system info
+                if (beamWeapon.config.energySystemType == BeamWeaponConfig.EnergySystemType.AutoRecharge)
+                {
+                    EditorGUILayout.LabelField($"Energy Regeneration Rate: {beamWeapon.config.energyRegenRate}/sec");
+                }
+                else
+                {
+                    EditorGUILayout.LabelField($"Batteries: {beamWeapon.config.CurrentBatteryCount}/{beamWeapon.config.maxBatteryCount}");
+                    EditorGUILayout.LabelField($"Energy Per Battery: {beamWeapon.config.energyPerBattery}");
+                }
+                
                 EditorGUILayout.LabelField($"Energy Drain Rate: {beamWeapon.config.energyDrainRate}/sec");
                 
+                // Firing control button
                 if (GUILayout.Button(beamWeapon.IsFiring ? "Stop Beam" : "Start Beam"))
                 {
                     if (beamWeapon.IsFiring)
@@ -310,6 +434,8 @@ namespace Weapons.Editor
                 }
                 
                 // Add buttons for energy testing
+                EditorGUILayout.BeginHorizontal();
+                
                 if (GUILayout.Button("Fill Energy"))
                 {
                     beamWeapon.CurrentEnergy = beamWeapon.config.maxEnergy;
@@ -320,10 +446,38 @@ namespace Weapons.Editor
                     beamWeapon.CurrentEnergy = 0;
                 }
                 
-                // Add a manual regeneration button
-                if (GUILayout.Button("Regenerate Energy (+25%)"))
+                EditorGUILayout.EndHorizontal();
+                
+                // Add battery-specific buttons if using battery reload system
+                if (beamWeapon.config.energySystemType == BeamWeaponConfig.EnergySystemType.BatteryReload)
                 {
-                    beamWeapon.CurrentEnergy += beamWeapon.config.maxEnergy * 0.25f;
+                    EditorGUILayout.BeginHorizontal();
+                    
+                    if (GUILayout.Button("Add Battery"))
+                    {
+                        if (beamWeapon.config.CurrentBatteryCount < beamWeapon.config.maxBatteryCount)
+                        {
+                            beamWeapon.config.CurrentBatteryCount++;
+                        }
+                    }
+                    
+                    if (GUILayout.Button("Use Battery"))
+                    {
+                        if (beamWeapon.config.CurrentBatteryCount > 0 && beamWeapon.CurrentEnergy < beamWeapon.config.maxEnergy)
+                        {
+                            beamWeapon.StartCoroutine(beamWeapon.ReloadBattery());
+                        }
+                    }
+                    
+                    EditorGUILayout.EndHorizontal();
+                }
+                else
+                {
+                    // Add a manual regeneration button for auto-recharge mode
+                    if (GUILayout.Button("Regenerate Energy (+25%)"))
+                    {
+                        beamWeapon.CurrentEnergy += beamWeapon.config.maxEnergy * 0.25f;
+                    }
                 }
                 
                 if (beamWeapon.IsFiring)
@@ -334,6 +488,33 @@ namespace Weapons.Editor
                         EditorCoroutines.StartCoroutine(SimulateBeamSpin(beamWeapon), this);
                     }
                 }
+                
+                if (beamWeapon.config.fireMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
+                {
+                    // Show charge progress bar
+                    float chargePercent = beamWeapon.GetCurrentChargePercent();
+                    
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.PrefixLabel("Charge Level");
+                    
+                    // Progress bar for charge
+                    Rect progressRect = EditorGUILayout.GetControlRect();
+                    EditorGUI.ProgressBar(progressRect, chargePercent, $"{chargePercent * 100:F0}%");
+                    
+                    EditorGUILayout.EndHorizontal();
+                    
+                    float damageMultiplier = 1f + chargePercent * (beamWeapon.config.maxChargeDamageMultiplier - 1f);
+                    EditorGUILayout.LabelField($"Current Damage Multiplier: {damageMultiplier:F2}x");
+                }
+            }
+            
+            // Auto-Reload When Empty
+            SerializedProperty autoReloadProp = configProperty.FindPropertyRelative("autoReloadWhenDepleted");
+            EditorGUILayout.PropertyField(autoReloadProp, new GUIContent("Auto-Reload When Empty"));
+            
+            if (autoReloadProp.boolValue)
+            {
+                EditorGUILayout.HelpBox("Weapon will automatically reload a battery when energy is depleted.", MessageType.Info);
             }
         }
         

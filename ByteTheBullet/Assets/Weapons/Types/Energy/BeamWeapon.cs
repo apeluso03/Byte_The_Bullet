@@ -20,6 +20,9 @@ namespace Weapons
         private bool isFiringBeam = false;
         private bool isCharging = false;
         private Coroutine chargeCoroutine;
+        private float chargeStartTime;
+        private bool isChargedShot = false;
+        private float currentCharge = 0f;
         
         // Components
         private BeamWeaponEnergy energyManager;
@@ -88,8 +91,9 @@ namespace Weapons
         {
             HandleInput();
             
-            // Update energy regeneration - make sure it only regenerates when NOT firing
-            if (!isFiringBeam && !isReloading)
+            // Update energy regeneration - only if using auto-recharge and not firing
+            if (config.energySystemType == BeamWeaponConfig.EnergySystemType.AutoRecharge && 
+                !isFiringBeam && !isReloading)
             {
                 CurrentEnergy += config.energyRegenRate * Time.deltaTime;
                 
@@ -119,21 +123,53 @@ namespace Weapons
                 return;
             }
             
-            // Check for energy recharge (reload equivalent)
-            if (Input.GetKeyDown(KeyCode.R) && CurrentEnergy < config.maxEnergy)
+            // Check for battery reload or energy recharge based on system type
+            if (Input.GetKeyDown(KeyCode.R))
             {
-                StartCoroutine(energyManager.RechargeBeam());
+                if (config.energySystemType == BeamWeaponConfig.EnergySystemType.BatteryReload)
+                {
+                    // Start battery reload if we have batteries and aren't at max energy
+                    if (config.CurrentBatteryCount > 0 && CurrentEnergy < config.maxEnergy)
+                    {
+                        StartCoroutine(ReloadBattery());
+                    }
+                }
+                else
+                {
+                    // For auto-recharge mode, use the existing recharge mechanism
+                    if (CurrentEnergy < config.maxEnergy)
+                    {
+                        StartCoroutine(energyManager.RechargeBeam());
+                    }
+                }
                 return;
             }
             
-            // Handle firing input
-            if (Input.GetMouseButtonDown(0) && !isFiringBeam && CanFireBeam())
+            // Handle fire input based on fire mode
+            if (config.fireMode == BeamWeaponConfig.BeamFireMode.Continuous)
             {
-                StartBeam();
+                // Hold to fire, release to stop
+                if (Input.GetMouseButtonDown(0) && !isFiringBeam && CanFireBeam())
+                {
+                    StartBeam();
+                }
+                else if (Input.GetMouseButtonUp(0) && isFiringBeam)
+                {
+                    StopBeam();
+                }
             }
-            else if (Input.GetMouseButtonUp(0) && isFiringBeam)
+            else if (config.fireMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
             {
-                StopBeam();
+                // Charge Burst mode - hold to charge, auto-fires when charge complete
+                if (Input.GetMouseButtonDown(0) && !isChargedShot && !isFiringBeam && CanFireBeam())
+                {
+                    StartBeam();
+                }
+                else if (Input.GetMouseButtonUp(0) && isChargedShot)
+                {
+                    // Cancel charging if released before fully charged
+                    CancelCharging();
+                }
             }
         }
         
@@ -147,21 +183,46 @@ namespace Weapons
             if (!CanFireBeam())
                 return;
             
-            // If using charge effect, start the charging sequence
-            if (config.useChargeEffect && config.chargeTime > 0)
+            switch (config.fireMode)
             {
-                if (!isCharging)
-                {
-                    if (chargeCoroutine != null)
-                        StopCoroutine(chargeCoroutine);
-                        
-                    chargeCoroutine = StartCoroutine(ChargeAndFireBeam());
-                }
-            }
-            else
-            {
-                // Fire immediately if not using charge effect
-                ActivateBeam();
+                case BeamWeaponConfig.BeamFireMode.Continuous:
+                    // Existing continuous beam logic
+                    if (config.useChargeEffect && config.chargeTime > 0)
+                    {
+                        if (!isCharging)
+                        {
+                            if (chargeCoroutine != null)
+                                StopCoroutine(chargeCoroutine);
+                                
+                            chargeCoroutine = StartCoroutine(ChargeAndFireBeam());
+                        }
+                    }
+                    else
+                    {
+                        ActivateBeam();
+                    }
+                    break;
+                    
+                case BeamWeaponConfig.BeamFireMode.ChargeBurst:
+                    // Start charging, then auto-fire
+                    chargeStartTime = Time.time;
+                    isChargedShot = true;
+                    
+                    // Play charge effect
+                    if (beamFX != null)
+                    {
+                        beamFX.PlayChargeEffect(firePoint);
+                    }
+                    
+                    // Play charge sound
+                    if (audioSource != null && config.beamStartSound != null)
+                    {
+                        audioSource.PlayOneShot(config.beamStartSound, 0.5f);
+                    }
+                    
+                    // Start the charge and auto-fire coroutine
+                    StartCoroutine(ChargeAndAutoBurst());
+                    break;
             }
         }
         
@@ -187,6 +248,27 @@ namespace Weapons
             // Fire the beam
             ActivateBeam();
             isCharging = false;
+        }
+        
+        private IEnumerator ChargeAndAutoBurst()
+        {
+            // Wait for charge duration
+            yield return new WaitForSeconds(config.maxChargeTime);
+            
+            // If we're still charging (player hasn't released button)
+            if (isChargedShot)
+            {
+                isChargedShot = false;
+                
+                // Stop charge effect
+                if (beamFX != null)
+                {
+                    beamFX.StopChargeEffect();
+                }
+                
+                // Fire the burst at full charge
+                StartCoroutine(FireChargedBeam(1.0f));
+            }
         }
         
         private void ActivateBeam()
@@ -218,14 +300,42 @@ namespace Weapons
         
         private void UpdateBeam()
         {
+            // Add null checks at the beginning of the method
+            if (firePoint == null)
+            {
+                Debug.LogError("Beam weapon is missing firePoint reference");
+                StopBeam();
+                return;
+            }
+
+            if (beamPhysics == null)
+            {
+                Debug.LogError("Beam weapon is missing beamPhysics reference");
+                StopBeam();
+                return;
+            }
+
             // Force energy consumption - this line is crucial
             CurrentEnergy -= config.energyDrainRate * Time.deltaTime;
             
             // Check if energy is depleted
             if (CurrentEnergy <= 0)
             {
+                // Stop the beam
                 StopBeam();
-                onOutOfAmmo?.Invoke();
+                
+                // If using battery reload with auto-reload enabled and we have batteries, auto-reload
+                if (config.energySystemType == BeamWeaponConfig.EnergySystemType.BatteryReload && 
+                    config.autoReloadWhenDepleted &&
+                    config.CurrentBatteryCount > 0)
+                {
+                    StartCoroutine(AutoReloadBattery());
+                }
+                else
+                {
+                    // Trigger the out of ammo event
+                    onOutOfAmmo?.Invoke();
+                }
                 return;
             }
             
@@ -255,31 +365,39 @@ namespace Weapons
                 endPos = startPos + aimDirection * config.beamRange;
             }
             
-            // Update the beam physics simulation
-            beamPhysics.UpdateBeam(startPos, endPos, aimDirection);
-            
-            // Update end rotation for effects
-            Quaternion targetRotation = hasHit ? 
-                Quaternion.FromToRotation(Vector3.right, hitNormal) : firePoint.rotation;
-            
-            // Update visual effects
-            if (beamFX != null)
+            // Update the beam physics simulation with null check
+            if (beamPhysics != null)
             {
-                Vector3 effectEndPos = beamPhysics.GetEndPosition();
+                beamPhysics.UpdateBeam(startPos, endPos, aimDirection);
                 
-                beamFX.PlayFlareEffects(startPos, effectEndPos, firePoint.rotation, targetRotation);
+                // Update end rotation for effects
+                Quaternion targetRotation = hasHit ? 
+                    Quaternion.FromToRotation(Vector3.right, hitNormal) : firePoint.rotation;
                 
-                if (hasHit)
+                // Update visual effects with null check
+                if (beamFX != null)
                 {
-                    beamFX.PlayImpactEffect(effectEndPos, hitNormal);
+                    Vector3 effectEndPos = beamPhysics.GetEndPosition();
+                    
+                    beamFX.PlayFlareEffects(startPos, effectEndPos, firePoint.rotation, targetRotation);
+                    
+                    if (hasHit)
+                    {
+                        beamFX.PlayImpactEffect(effectEndPos, hitNormal);
+                    }
+                    else
+                    {
+                        beamFX.StopImpactEffect();
+                    }
+                    
+                    // Update beam animation with physics points
+                    beamFX.UpdateCurvedBeamAnimation(beamPhysics.GetBeamPositions());
                 }
-                else
-                {
-                    beamFX.StopImpactEffect();
-                }
-                
-                // Update beam animation with physics points
-                beamFX.UpdateCurvedBeamAnimation(beamPhysics.GetBeamPositions());
+            }
+            else
+            {
+                Debug.LogError("Beam physics is null during beam update");
+                StopBeam();
             }
         }
         
@@ -291,6 +409,18 @@ namespace Weapons
                 isCharging = false;
             }
             
+            // Handle charged shot on release (only for manual release now)
+            if (isChargedShot && config.fireMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
+            {
+                CancelCharging();
+                return;
+            }
+            
+            StopBeamInternal();
+        }
+        
+        private void StopBeamInternal()
+        {
             isFiringBeam = false;
             
             // Clean up physics
@@ -317,6 +447,56 @@ namespace Weapons
                     audioSource.PlayOneShot(config.beamEndSound);
                 }
             }
+        }
+        
+        private void CancelCharging()
+        {
+            if (isChargedShot)
+            {
+                isChargedShot = false;
+                
+                // Stop charge effect
+                if (beamFX != null)
+                {
+                    beamFX.StopChargeEffect();
+                }
+                
+                // Play cancel sound
+                if (audioSource != null && config.beamEndSound != null)
+                {
+                    audioSource.PlayOneShot(config.beamEndSound, 0.5f);
+                }
+            }
+        }
+        
+        private IEnumerator FireChargedBeam(float chargePercent)
+        {
+            // Calculate damage multiplier based on charge
+            float damageMultiplier = 1f + chargePercent * (config.maxChargeDamageMultiplier - 1f);
+            
+            // Activate beam with increased damage
+            ActivateBeam();
+            
+            // Store original damage
+            float originalDamage = config.beamDamagePerSecond;
+            
+            // Apply multiplier
+            config.beamDamagePerSecond *= damageMultiplier;
+            
+            // Play charged sound effect if available
+            if (audioSource != null && config.beamStartSound != null)
+            {
+                audioSource.PlayOneShot(config.beamStartSound, 1.0f * chargePercent);
+            }
+            
+            // Keep beam on for configured burst duration
+            yield return new WaitForSeconds(config.burstDuration);
+            
+            // Restore original damage
+            config.beamDamagePerSecond = originalDamage;
+            
+            // Turn beam off
+            StopBeamInternal();
         }
         
         public override void Shoot()
@@ -386,6 +566,61 @@ namespace Weapons
             }
             
             InitializeBeamPhysics();
+        }
+        
+        public float GetCurrentChargePercent()
+        {
+            if (!isChargedShot)
+                return currentCharge;
+                
+            float chargeDuration = Time.time - chargeStartTime;
+            return Mathf.Clamp01(chargeDuration / config.maxChargeTime);
+        }
+        
+        // Add this new method for auto-reloading
+        private IEnumerator AutoReloadBattery()
+        {
+            // Only proceed if we have batteries and aren't already reloading
+            if (config.CurrentBatteryCount <= 0 || isReloading)
+                yield break;
+            
+            Debug.Log("Auto-reloading battery...");
+            
+            // Start the reload process
+            isReloading = true;
+            onReloadStart?.Invoke();
+            
+            // Play reload sound
+            if (audioSource != null && reloadSound != null)
+            {
+                audioSource.PlayOneShot(reloadSound);
+            }
+            
+            // Wait for reload time
+            yield return new WaitForSeconds(config.batteryReloadTime);
+            
+            // Add energy from battery
+            CurrentEnergy += config.energyPerBattery;
+            
+            // Use one battery
+            config.CurrentBatteryCount--;
+            
+            // Notify of energy change
+            if (energyManager != null)
+            {
+                energyManager.UpdateEnergyUI();
+            }
+            
+            isReloading = false;
+            onReloadComplete?.Invoke();
+            
+            Debug.Log($"Auto-reload complete! Energy: {CurrentEnergy}, Batteries remaining: {config.CurrentBatteryCount}");
+        }
+        
+        // Update the ReloadBattery method to be public and use the auto-reload logic
+        public IEnumerator ReloadBattery()
+        {
+            yield return StartCoroutine(AutoReloadBattery());
         }
     }
 }
