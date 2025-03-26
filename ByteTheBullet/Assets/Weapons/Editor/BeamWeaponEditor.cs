@@ -50,7 +50,10 @@ namespace Weapons.Editor
             "reloadSound",        // We handle this in battery settings
             "impactEffectPrefab", // We handle this in the Visual FX section
             "shakeIntensity",     // Hide camera shake settings
-            "shakeDuration"
+            "shakeDuration",
+            
+            // Add this line to fix the duplicate fire point
+            "firePoint"           // Hide default fire point (we show it in Firing Settings now)
         };
         
         // SerializedProperty for the weapon name
@@ -177,7 +180,66 @@ namespace Weapons.Editor
             
             EditorGUI.indentLevel--;
             
-            // Energy settings
+            // MOVED UP: Firing Settings section
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Firing Settings", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            
+            // MOVED: Fire point reference from elsewhere
+            SerializedProperty firePointProp = serializedObject.FindProperty("firePoint");
+            EditorGUILayout.PropertyField(firePointProp, new GUIContent("Fire Point"));
+            
+            // Fire mode dropdown
+            SerializedProperty fireModeProp = configProperty.FindPropertyRelative("fireMode");
+            EditorGUILayout.PropertyField(fireModeProp, new GUIContent("Beam Fire Mode"));
+            
+            // Show relevant settings based on selected fire mode
+            BeamWeaponConfig.BeamFireMode selectedMode = (BeamWeaponConfig.BeamFireMode)fireModeProp.enumValueIndex;
+            
+            if (selectedMode == BeamWeaponConfig.BeamFireMode.Continuous)
+            {
+                SerializedProperty continuousChargeTimeProp = configProperty.FindPropertyRelative("continuousChargeTime");
+                EditorGUILayout.PropertyField(continuousChargeTimeProp, new GUIContent("Charge-up Time"));
+                
+                if (continuousChargeTimeProp.floatValue > 0)
+                {
+                    EditorGUILayout.HelpBox("Beam requires a brief charge-up before firing continuously.", MessageType.Info);
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("Beam fires immediately with no charge-up time.", MessageType.Info);
+                }
+            }
+            else if (selectedMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
+            {
+                SerializedProperty maxChargeTimeProp = configProperty.FindPropertyRelative("maxChargeTime");
+                SerializedProperty maxChargeDmgMultProp = configProperty.FindPropertyRelative("maxChargeDamageMultiplier");
+                SerializedProperty burstDurationProp = configProperty.FindPropertyRelative("burstDuration");
+                
+                EditorGUILayout.PropertyField(maxChargeTimeProp, new GUIContent("Charge Time"));
+                EditorGUILayout.PropertyField(burstDurationProp, new GUIContent("Burst Duration"));
+                EditorGUILayout.PropertyField(maxChargeDmgMultProp, new GUIContent("Damage Multiplier"));
+                
+                EditorGUILayout.HelpBox("Hold fire button to charge. Beam will automatically fire when fully charged.", MessageType.Info);
+            }
+            
+            EditorGUI.indentLevel--;
+            
+            // Damage section below Firing Settings
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Damage Settings", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            
+            // Draw damage property
+            EditorGUILayout.PropertyField(damageProperty);
+            
+            // Beam damage per second
+            SerializedProperty beamDamagePerSecondProp = configProperty.FindPropertyRelative("beamDamagePerSecond");
+            EditorGUILayout.PropertyField(beamDamagePerSecondProp, new GUIContent("Beam DPS"));
+            
+            EditorGUI.indentLevel--;
+            
+            // Energy settings - now AFTER firing settings
             EditorGUILayout.Space(10);
             showEnergySettings = EditorGUILayout.Foldout(showEnergySettings, "Energy Settings", true, EditorStyles.foldoutHeader);
             
@@ -301,61 +363,6 @@ namespace Weapons.Editor
                 
                 EditorGUI.indentLevel--;
             }
-            
-            // Damage section below Weapon Info
-            EditorGUILayout.Space(10);
-            EditorGUILayout.LabelField("Damage Settings", EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
-            
-            // Draw damage property
-            EditorGUILayout.PropertyField(damageProperty);
-            
-            // Beam damage per second
-            SerializedProperty beamDamagePerSecondProp = configProperty.FindPropertyRelative("beamDamagePerSecond");
-            EditorGUILayout.PropertyField(beamDamagePerSecondProp, new GUIContent("Beam DPS"));
-            
-            EditorGUI.indentLevel--;
-            
-            // After the Damage Settings section
-            EditorGUILayout.Space(10);
-            EditorGUILayout.LabelField("Firing Settings", EditorStyles.boldLabel);
-            EditorGUI.indentLevel++;
-            
-            // Fire mode dropdown
-            SerializedProperty fireModeProp = configProperty.FindPropertyRelative("fireMode");
-            EditorGUILayout.PropertyField(fireModeProp, new GUIContent("Beam Fire Mode"));
-            
-            // Show relevant settings based on selected fire mode
-            BeamWeaponConfig.BeamFireMode selectedMode = (BeamWeaponConfig.BeamFireMode)fireModeProp.enumValueIndex;
-            
-            if (selectedMode == BeamWeaponConfig.BeamFireMode.Continuous)
-            {
-                SerializedProperty continuousChargeTimeProp = configProperty.FindPropertyRelative("continuousChargeTime");
-                EditorGUILayout.PropertyField(continuousChargeTimeProp, new GUIContent("Charge-up Time"));
-                
-                if (continuousChargeTimeProp.floatValue > 0)
-                {
-                    EditorGUILayout.HelpBox("Beam requires a brief charge-up before firing continuously.", MessageType.Info);
-                }
-                else
-                {
-                    EditorGUILayout.HelpBox("Beam fires immediately with no charge-up time.", MessageType.Info);
-                }
-            }
-            else if (selectedMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
-            {
-                SerializedProperty maxChargeTimeProp = configProperty.FindPropertyRelative("maxChargeTime");
-                SerializedProperty maxChargeDmgMultProp = configProperty.FindPropertyRelative("maxChargeDamageMultiplier");
-                SerializedProperty burstDurationProp = configProperty.FindPropertyRelative("burstDuration");
-                
-                EditorGUILayout.PropertyField(maxChargeTimeProp, new GUIContent("Charge Time"));
-                EditorGUILayout.PropertyField(burstDurationProp, new GUIContent("Burst Duration"));
-                EditorGUILayout.PropertyField(maxChargeDmgMultProp, new GUIContent("Damage Multiplier"));
-                
-                EditorGUILayout.HelpBox("Hold fire button to charge. Beam will automatically fire when fully charged.", MessageType.Info);
-            }
-            
-            EditorGUI.indentLevel--;
             
             // Add a new Visual FX section after Firing Settings or before Freeze Ray Presets
             EditorGUILayout.Space(10);
