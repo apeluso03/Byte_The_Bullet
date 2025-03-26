@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using Weapons;
 
 namespace Weapons.Editor
 {
@@ -18,7 +17,7 @@ namespace Weapons.Editor
             
             // Beam visibility toggle
             EditorGUILayout.Space(10);
-            if (GUILayout.Button(beamWeapon.hideBeamColor ? "Show Beam Color" : "Hide Beam Color"))
+            if (GUILayout.Button(beamWeapon.config.hideBeamColor ? "Show Beam Color" : "Hide Beam Color"))
             {
                 Undo.RecordObject(beamWeapon, "Toggle Beam Visibility");
                 beamWeapon.ToggleBeamVisibility();
@@ -40,27 +39,27 @@ namespace Weapons.Editor
                 if (GUILayout.Button("Enter the Gungeon Style"))
                 {
                     Undo.RecordObject(beamWeapon, "Apply Beam Preset");
-                    beamWeapon.beamSegments = 24;
-                    beamWeapon.beamFollowSpeed = 8f;
-                    beamWeapon.tipLagMultiplier = 1.5f;
+                    beamWeapon.config.beamSegments = 24;
+                    beamWeapon.config.beamFollowSpeed = 8f;
+                    beamWeapon.config.tipLagMultiplier = 1.5f;
                     EditorUtility.SetDirty(beamWeapon);
                 }
                 
                 if (GUILayout.Button("Super Whippy"))
                 {
                     Undo.RecordObject(beamWeapon, "Apply Beam Preset");
-                    beamWeapon.beamSegments = 32;
-                    beamWeapon.beamFollowSpeed = 5f;
-                    beamWeapon.tipLagMultiplier = 2.5f;
+                    beamWeapon.config.beamSegments = 32;
+                    beamWeapon.config.beamFollowSpeed = 5f;
+                    beamWeapon.config.tipLagMultiplier = 2.5f;
                     EditorUtility.SetDirty(beamWeapon);
                 }
                 
                 if (GUILayout.Button("Quick Response"))
                 {
                     Undo.RecordObject(beamWeapon, "Apply Beam Preset");
-                    beamWeapon.beamSegments = 16;
-                    beamWeapon.beamFollowSpeed = 12f;
-                    beamWeapon.tipLagMultiplier = 1.0f;
+                    beamWeapon.config.beamSegments = 16;
+                    beamWeapon.config.beamFollowSpeed = 12f;
+                    beamWeapon.config.tipLagMultiplier = 1.0f;
                     EditorUtility.SetDirty(beamWeapon);
                 }
                 
@@ -70,17 +69,18 @@ namespace Weapons.Editor
                 
                 EditorGUILayout.LabelField("Visual Quality:", EditorStyles.boldLabel);
                 
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("beamSegments"));
+                SerializedProperty configProperty = serializedObject.FindProperty("config");
+                EditorGUILayout.PropertyField(configProperty.FindPropertyRelative("beamSegments"));
                 EditorGUILayout.HelpBox("Higher values create a smoother curve but may impact performance.", MessageType.None);
                 
                 EditorGUILayout.Space(5);
                 
                 EditorGUILayout.LabelField("Beam Behavior:", EditorStyles.boldLabel);
                 
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("beamFollowSpeed"));
+                EditorGUILayout.PropertyField(configProperty.FindPropertyRelative("beamFollowSpeed"));
                 EditorGUILayout.HelpBox("Lower values create more lag. Higher values make the beam follow aim changes more quickly.", MessageType.None);
                 
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("tipLagMultiplier"));
+                EditorGUILayout.PropertyField(configProperty.FindPropertyRelative("tipLagMultiplier"));
                 EditorGUILayout.HelpBox("Higher values create more dramatic whip effects at the beam tip.", MessageType.None);
                 
                 // Apply changes
@@ -154,30 +154,4 @@ namespace Weapons.Editor
             firePoint.rotation = originalRotation;
         }
     }
-    
-    // Simple editor coroutine implementation
-    public static class EditorCoroutines
-    {
-        public static void StartCoroutine(System.Collections.IEnumerator routine, Object owner)
-        {
-            EditorApplication.CallbackFunction update = null;
-            update = () =>
-            {
-                try
-                {
-                    if (!routine.MoveNext())
-                    {
-                        EditorApplication.update -= update;
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    Debug.LogException(ex);
-                    EditorApplication.update -= update;
-                }
-            };
-            
-            EditorApplication.update += update;
-        }
-    }
-} 
+}
