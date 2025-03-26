@@ -16,16 +16,45 @@ namespace Weapons.Editor
             "onAmmoChanged", 
             "onReloadStart", 
             "onReloadComplete", 
-            "onOutOfAmmo"
+            "onOutOfAmmo",
+            "weaponType",   // Exclude so we can display a fixed label instead
+            "damageType",   // Exclude damage type completely
+            "weaponName",   // We'll handle these properties manually
+            "rarity",       // in our custom inspector section
+            "description",
+            "damage",       // Also handle damage property manually
+            "m_Script"      // Hide the script reference at the top
         };
         
         // SerializedProperty for the weapon name
         private SerializedProperty weaponNameProperty;
+        private SerializedProperty rarityProperty;
+        private SerializedProperty descriptionProperty;
+        private SerializedProperty damageProperty;
+        private SerializedProperty scriptProperty;
+        
+        // Colors for different rarities
+        private readonly Color[] rarityColors = new Color[] {
+            new Color(0.7f, 0.7f, 0.7f),     // Common - Gray
+            new Color(0.3f, 0.8f, 0.3f),     // Uncommon - Green
+            new Color(0.3f, 0.5f, 1.0f),     // Rare - Blue
+            new Color(0.8f, 0.3f, 0.9f),     // Epic - Purple
+            new Color(1.0f, 0.8f, 0.0f),     // Legendary - Gold
+            new Color(1.0f, 0.4f, 0.0f)      // Unique - Orange
+        };
+        
+        private readonly string[] rarityOptions = new string[] { 
+            "Common", "Uncommon", "Rare", "Epic", "Legendary", "Unique" 
+        };
         
         private void OnEnable()
         {
-            // Get the weapon name property
+            // Get properties
+            scriptProperty = serializedObject.FindProperty("m_Script");
             weaponNameProperty = serializedObject.FindProperty("weaponName");
+            rarityProperty = serializedObject.FindProperty("rarity");
+            descriptionProperty = serializedObject.FindProperty("description");
+            damageProperty = serializedObject.FindProperty("damage");
         }
         
         public override void OnInspectorGUI()
@@ -35,12 +64,18 @@ namespace Weapons.Editor
             // Update the serialized object
             serializedObject.Update();
             
-            // Custom Inspector Layout
+            // Display script field at the top (but disabled)
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUILayout.PropertyField(scriptProperty);
+            EditorGUI.EndDisabledGroup();
+            
             EditorGUILayout.Space(5);
+            
+            // Our custom Weapon Info section
             EditorGUILayout.LabelField("Weapon Info", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             
-            // Draw the name property using Unity's standard PropertyField
+            // Draw the name property
             string oldName = beamWeapon.weaponName;
             
             EditorGUI.BeginChangeCheck();
@@ -60,30 +95,60 @@ namespace Weapons.Editor
                 }
             }
             
-            // Draw weapon type field
-            SerializedProperty weaponTypeProp = serializedObject.FindProperty("weaponType");
-            if (weaponTypeProp != null)
+            // Display weapon type as a fixed label (not editable)
+            using (new EditorGUI.DisabledScope(true))
             {
-                EditorGUILayout.PropertyField(weaponTypeProp);
+                EditorGUILayout.TextField("Weapon Type", "Beam");
             }
             
-            // Draw damage type
-            SerializedProperty damageTypeProp = serializedObject.FindProperty("damageType");
-            if (damageTypeProp != null)
+            // Draw rarity field with visual indication of rarity color
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel("Rarity");
+            
+            // Find current rarity index
+            int rarityIndex = 0;
+            for (int i = 0; i < rarityOptions.Length; i++)
             {
-                EditorGUILayout.PropertyField(damageTypeProp);
+                if (rarityOptions[i] == beamWeapon.rarity)
+                {
+                    rarityIndex = i;
+                    break;
+                }
             }
             
-            // Draw damage property
-            SerializedProperty damageProp = serializedObject.FindProperty("damage");
-            if (damageProp != null)
+            // Apply the rarity color to the popup background
+            Color originalBgColor = GUI.backgroundColor;
+            GUI.backgroundColor = rarityColors[rarityIndex];
+            
+            // Create the dropdown
+            int newRarityIndex = EditorGUILayout.Popup(rarityIndex, rarityOptions);
+            if (newRarityIndex != rarityIndex)
             {
-                EditorGUILayout.PropertyField(damageProp);
+                Undo.RecordObject(beamWeapon, "Change Weapon Rarity");
+                beamWeapon.rarity = rarityOptions[newRarityIndex];
+                EditorUtility.SetDirty(beamWeapon);
             }
+            
+            // Reset background color
+            GUI.backgroundColor = originalBgColor;
+            EditorGUILayout.EndHorizontal();
+            
+            // Draw description with text area (now under rarity)
+            EditorGUILayout.PropertyField(descriptionProperty);
             
             EditorGUI.indentLevel--;
             
-            // Draw all remaining properties except excluded ones
+            // Damage section below Weapon Info
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Damage Settings", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            
+            // Draw damage property
+            EditorGUILayout.PropertyField(damageProperty);
+            
+            EditorGUI.indentLevel--;
+            
+            // Now draw all remaining properties except excluded ones
             DrawPropertiesExcluding(serializedObject, excludedProperties.ToArray());
             
             // Apply modified properties
@@ -98,7 +163,7 @@ namespace Weapons.Editor
                 EditorUtility.SetDirty(beamWeapon);
             }
             
-            // Freeze Ray Presets
+            // Freeze Ray Presets section
             EditorGUILayout.Space(10);
             showFreezeRaySettings = EditorGUILayout.Foldout(showFreezeRaySettings, "Freeze Ray Presets", true, EditorStyles.foldoutHeader);
             
