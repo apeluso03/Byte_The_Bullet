@@ -378,9 +378,18 @@ namespace Weapons.Editor
             SerializedProperty beamSectionDistanceProp = configProperty.FindPropertyRelative("beamSectionDistance");
             SerializedProperty sectionOverlapProp = configProperty.FindPropertyRelative("sectionOverlap");
             
+            EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(beamWidthProp, new GUIContent("Beam Width"));
             EditorGUILayout.PropertyField(beamSectionDistanceProp, new GUIContent("Section Distance"));
             EditorGUILayout.PropertyField(sectionOverlapProp, new GUIContent("Section Overlap"));
+            if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+            {
+                // Apply immediately in play mode for real-time feedback
+                serializedObject.ApplyModifiedProperties();
+                
+                // If in play mode, directly update the beam width
+                beamWeapon.UpdateBeamWidth(beamWidthProp.floatValue);
+            }
             
             EditorGUILayout.HelpBox("These prefabs will be used by the beam's visual effects system. The beam middle prefab is particularly important as it forms the visible beam.", MessageType.Info);
             

@@ -82,24 +82,36 @@ namespace Weapons
             
             // Initialize beam physics
             InitializeBeamPhysics();
+            
+            // Make sure beam physics is initialized
+            InitializeBeamPhysics();
         }
         
         private void InitializeBeamPhysics()
         {
-            GameObject physicsObj = new GameObject("BeamPhysics");
-            physicsObj.transform.SetParent(transform);
+            // Make sure we don't already have a physics component
+            if (beamPhysics != null) return;
             
-            // Choose physics implementation based on config
+            // Create the appropriate beam physics implementation based on config
             if (config.useRopePhysics)
             {
-                beamPhysics = physicsObj.AddComponent<RopeBeamPhysics>();
+                RopeBeamPhysics ropePhysics = gameObject.AddComponent<RopeBeamPhysics>();
+                ropePhysics.Initialize(config, firePoint);
+                beamPhysics = ropePhysics;
+            }
+            else if (config.useSmoothCurve)
+            {
+                SmoothCurveBeamPhysics curvePhysics = gameObject.AddComponent<SmoothCurveBeamPhysics>();
+                curvePhysics.Initialize(config, firePoint);
+                beamPhysics = curvePhysics;
             }
             else
             {
-                beamPhysics = physicsObj.AddComponent<SmoothCurveBeamPhysics>();
+                // Fallback to simple beam physics if needed
+                SimpleBeamPhysics simplePhysics = gameObject.AddComponent<SimpleBeamPhysics>();
+                simplePhysics.Initialize(config, firePoint);
+                beamPhysics = simplePhysics;
             }
-            
-            beamPhysics.Initialize(config, firePoint);
         }
         
         protected override void Update()
@@ -317,21 +329,21 @@ namespace Weapons
         
         private void UpdateBeam()
         {
-            // Add null checks at the beginning of the method
-            if (firePoint == null)
-            {
-                Debug.LogError("Beam weapon is missing firePoint reference");
-                StopBeam();
-                return;
-            }
-
+            // Check if beamPhysics is initialized
             if (beamPhysics == null)
             {
-                Debug.LogError("Beam weapon is missing beamPhysics reference");
-                StopBeam();
-                return;
+                // Try to initialize it
+                InitializeBeamPhysics();
+                
+                // If still null, log error and return early
+                if (beamPhysics == null)
+                {
+                    Debug.LogError("Beam weapon is missing beamPhysics reference");
+                    return;
+                }
             }
-
+            
+            // Now we can safely use beamPhysics
             // Force energy consumption - this line is crucial
             CurrentEnergy -= config.energyDrainRate * Time.deltaTime;
             
@@ -414,6 +426,14 @@ namespace Weapons
             {
                 Debug.LogError("Beam physics is null during beam update");
                 StopBeam();
+            }
+            
+            // Sync FX settings
+            if (beamFX != null)
+            {
+                beamFX.beamWidth = config.beamWidth;
+                beamFX.beamSectionDistance = config.beamSectionDistance;
+                beamFX.sectionOverlap = config.sectionOverlap;
             }
         }
         
@@ -672,6 +692,60 @@ namespace Weapons
         {
             // Validate that all required FX prefabs are assigned
             ValidateFXPrefabs();
+        }
+        
+        // Add this method to BeamWeapon class to update FX settings
+        private void UpdateBeamFXSettings()
+        {
+            if (beamFX != null)
+            {
+                // Sync FX settings from config
+                beamFX.beamWidth = config.beamWidth;
+                beamFX.beamSectionDistance = config.beamSectionDistance;
+                beamFX.sectionOverlap = config.sectionOverlap;
+            }
+        }
+        
+        // Add this method to the BeamWeapon class
+        private void SyncBeamFXWithConfig()
+        {
+            if (beamFX != null)
+            {
+                // Update FX settings from config
+                beamFX.beamWidth = config.beamWidth;
+                beamFX.beamSectionDistance = config.beamSectionDistance;
+                beamFX.sectionOverlap = config.sectionOverlap;
+            }
+        }
+        
+        // Add this method to directly update beam width
+        public void UpdateBeamWidth(float width)
+        {
+            // Update the config
+            config.beamWidth = width;
+            
+            // Update the beam FX
+            if (beamFX != null)
+            {
+                beamFX.UpdateBeamWidth(width);
+            }
+            
+            // Update beam physics if it exists
+            if (beamPhysics != null)
+            {
+                // Since beamPhysics is an interface, we need to get the MonoBehaviour component
+                MonoBehaviour physicsComponent = beamPhysics as MonoBehaviour;
+                if (physicsComponent != null)
+                {
+                    // Now we can get the LineRenderer components
+                    LineRenderer[] lineRenderers = physicsComponent.GetComponentsInChildren<LineRenderer>();
+                    foreach (LineRenderer lr in lineRenderers)
+                    {
+                        lr.startWidth = width;
+                        lr.endWidth = width * 0.7f;
+                    }
+                }
+            }
         }
     }
 }

@@ -36,6 +36,11 @@ namespace Weapons
         private List<GameObject> beamMiddleInstances = new List<GameObject>();
         private Material beamMaterial;
         
+        // Add property change detection
+        private float _lastBeamWidth;
+        private float _lastSectionDistance;
+        private float _lastSectionOverlap;
+        
         // Setup the beam material
         public void SetupBeamMaterial(LineRenderer lineRenderer, Color beamColor)
         {
@@ -393,6 +398,105 @@ namespace Weapons
                     // Apply position and rotation
                     section.transform.position = position;
                     section.transform.rotation = rotation;
+                }
+            }
+        }
+
+        private void Update()
+        {
+            // Check if properties have changed
+            if (beamWidth != _lastBeamWidth || 
+                beamSectionDistance != _lastSectionDistance || 
+                sectionOverlap != _lastSectionOverlap)
+            {
+                // Values have changed, update the visuals
+                if (beamMiddleInstances.Count > 0)
+                {
+                    // Update beam width for any line renderers
+                    LineRenderer[] lineRenderers = GetComponentsInChildren<LineRenderer>(true);
+                    foreach (LineRenderer lr in lineRenderers)
+                    {
+                        lr.startWidth = beamWidth;
+                        lr.endWidth = beamWidth * 0.7f;
+                    }
+                    
+                    // Update sprite scale for beam sections
+                    foreach (GameObject section in beamMiddleInstances)
+                    {
+                        if (section != null && section.activeSelf)
+                        {
+                            // Adjust width scale of beam sections
+                            Vector3 scale = section.transform.localScale;
+                            scale.y = beamWidth * 5f; // Multiply by a factor to make it visible
+                            section.transform.localScale = scale;
+                        }
+                    }
+                    
+                    // If section distance or overlap changed, reapply the beam layout
+                    if (_lastSectionDistance != beamSectionDistance || _lastSectionOverlap != sectionOverlap)
+                    {
+                        // Find any active beam
+                        if (beamMiddleInstances.Count > 0 && beamMiddleInstances[0].activeSelf)
+                        {
+                            // Get the current start and end positions
+                            Vector3 startPos = beamMiddleInstances[0].transform.position;
+                            Vector3 endPos = startPos;
+                            
+                            // Find the last active section
+                            for (int i = beamMiddleInstances.Count - 1; i >= 0; i--)
+                            {
+                                if (beamMiddleInstances[i].activeSelf)
+                                {
+                                    endPos = beamMiddleInstances[i].transform.position;
+                                    break;
+                                }
+                            }
+                            
+                            // Reapply the beam layout
+                            UpdateBeamMiddleAnimation(startPos, endPos);
+                        }
+                    }
+                }
+                
+                // Store current values
+                _lastBeamWidth = beamWidth;
+                _lastSectionDistance = beamSectionDistance;
+                _lastSectionOverlap = sectionOverlap;
+            }
+        }
+
+        // Add this new method that specifically updates only the beam width
+        public void UpdateBeamWidth(float width)
+        {
+            // Store the new width
+            beamWidth = width;
+            _lastBeamWidth = width;
+            
+            // Update line renderers
+            LineRenderer[] lineRenderers = GetComponentsInChildren<LineRenderer>(true);
+            foreach (LineRenderer lr in lineRenderers)
+            {
+                lr.startWidth = width;
+                lr.endWidth = width * 0.7f;
+            }
+            
+            // Update beam middle section scales
+            foreach (GameObject section in beamMiddleInstances)
+            {
+                if (section != null)
+                {
+                    // Maintain x scale (length) but update y scale (width)
+                    Vector3 scale = section.transform.localScale;
+                    scale.y = width * 5f; // Multiplier to make it visually appropriate
+                    section.transform.localScale = scale;
+                    
+                    // Also update any child sprite renderers
+                    SpriteRenderer[] renderers = section.GetComponentsInChildren<SpriteRenderer>();
+                    foreach (SpriteRenderer sr in renderers)
+                    {
+                        // Update sprite width
+                        sr.size = new Vector2(sr.size.x, width * 2f);
+                    }
                 }
             }
         }
