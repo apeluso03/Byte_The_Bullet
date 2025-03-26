@@ -37,7 +37,20 @@ namespace Weapons.Editor
             "nextFireTime",       // Hide next fire time 
             "maxChargeTime",      // Hide the base weapon charge time
             "maxChargeDamageMultiplier", // Hide base weapon charge multiplier
-            "isReloading"         // Hide reload state
+            "isReloading",        // Hide reload state
+            
+            // Additional properties to hide
+            "reloadTime",         // Hide reload time (we handle this in battery settings)
+            "projectilePrefab",   // Hide projectile prefab (not needed for beam)
+            "projectileSpeed",    // Hide projectile speed (not needed for beam)
+            "accuracy",           // Hide accuracy slider (not needed for beam)
+            "muzzleFlash",        // Hide muzzle flash (not relevant for beams)
+            "shootSound",         // We use beam-specific sounds
+            "emptySound",         // Not relevant for beam
+            "reloadSound",        // We handle this in battery settings
+            "impactEffectPrefab", // We handle this in the Visual FX section
+            "shakeIntensity",     // Hide camera shake settings
+            "shakeDuration"
         };
         
         // SerializedProperty for the weapon name
