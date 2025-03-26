@@ -43,6 +43,9 @@ namespace Weapons
         // Add this public property to the BeamWeapon class
         public IBeamPhysics BeamPhysics => beamPhysics;
         
+        // Add this property to track if we've modified the beam system
+        private bool isUsingCustomRangeSystem = false;
+        
         protected override void Awake()
         {
             base.Awake();
@@ -95,7 +98,10 @@ namespace Weapons
         
         private void InitializeBeamPhysics()
         {
-            // Make sure we don't already have a physics component
+            // Clean up ALL existing beam physics to prevent duplicates
+            CleanupAllBeamComponents();
+            
+            // If we already have physics, don't re-create it
             if (beamPhysics != null) return;
             
             // Create the appropriate beam physics implementation based on config
@@ -113,7 +119,7 @@ namespace Weapons
             }
             else
             {
-                // Fallback to simple beam physics if needed
+                // Fallback to simple beam physics
                 SimpleBeamPhysics simplePhysics = gameObject.AddComponent<SimpleBeamPhysics>();
                 simplePhysics.Initialize(config, firePoint);
                 beamPhysics = simplePhysics;
@@ -213,6 +219,21 @@ namespace Weapons
         
         public void StartBeam()
         {
+            // If we have a custom range set, be more thorough with cleanup
+            if (isUsingCustomRangeSystem)
+            {
+                CleanupAllBeamComponents();
+            }
+            
+            // Make sure we have physics initialized
+            if (beamPhysics == null)
+            {
+                InitializeBeamPhysics();
+            }
+            
+            // Make sure we don't have duplicate renderers before starting
+            CleanupBeamPhysics();
+            
             if (!CanFireBeam())
                 return;
             
@@ -335,111 +356,84 @@ namespace Weapons
         
         private void UpdateBeam()
         {
-            // Check if beamPhysics is initialized
-            if (beamPhysics == null)
-            {
-                // Try to initialize it
-                InitializeBeamPhysics();
-                
-                // If still null, log error and return early
-                if (beamPhysics == null)
-                {
-                    Debug.LogError("Beam weapon is missing beamPhysics reference");
-                    return;
-                }
-            }
+            if (!isFiringBeam || beamPhysics == null) return;
             
-            // Now we can safely use beamPhysics
-            // Force energy consumption - this line is crucial
-            CurrentEnergy -= config.energyDrainRate * Time.deltaTime;
+            // Get the fire point position and direction
+            Vector3 firePosition = firePoint.position;
+            Vector3 fireDirection = firePoint.right;
             
-            // Check if energy is depleted
-            if (CurrentEnergy <= 0)
-            {
-                // Stop the beam
-                StopBeam();
-                
-                // If using battery reload and we have batteries, auto-reload
-                if (config.energySystemType == BeamWeaponConfig.EnergySystemType.BatteryReload && 
-                    config.CurrentBatteryCount > 0)
-                {
-                    StartCoroutine(AutoReloadBattery());
-                }
-                else
-                {
-                    // Trigger the out of ammo event
-                    onOutOfAmmo?.Invoke();
-                }
-                return;
-            }
+            // Perform raycast to find where the beam hits
+            RaycastHit2D hit = Physics2D.Raycast(firePosition, fireDirection, config.beamRange);
             
-            // Calculate beam start and target end positions
-            Vector3 startPos = firePoint.position;
-            Vector3 aimDirection = firePoint.right;
-            
-            // Raycast to find what the beam hits
-            RaycastHit2D hit = Physics2D.Raycast(startPos, aimDirection, config.beamRange);
-            
-            Vector3 endPos;
-            bool hasHit = false;
-            Vector3 hitNormal = Vector3.zero;
+            // Calculate the end position - either hit point or max range
+            Vector3 endPosition;
+            Vector3 hitNormal = Vector3.up;
+            bool didHit = false;
             
             if (hit.collider != null)
             {
-                endPos = hit.point;
-                hasHit = true;
+                // Beam hit something within range
+                endPosition = hit.point;
                 hitNormal = hit.normal;
-                
-                // Apply damage to hit object
-                float damageThisFrame = config.beamDamagePerSecond * Time.deltaTime;
-                // Your damage code would go here
+                didHit = true;
             }
             else
             {
-                endPos = startPos + aimDirection * config.beamRange;
+                // Beam reaches maximum range
+                endPosition = firePosition + fireDirection * config.beamRange;
+                didHit = false;
             }
             
-            // Update the beam physics simulation with null check
-            if (beamPhysics != null)
+            // Update the beam physics
+            beamPhysics.UpdateBeam(firePosition, endPosition, fireDirection);
+            
+            // Update visual effects
+            if (beamFX != null)
             {
-                beamPhysics.UpdateBeam(startPos, endPos, aimDirection);
+                // Apply visual updates
+                beamFX.beamWidth = config.beamWidth;
+                beamFX.beamSectionDistance = config.beamSectionDistance;
+                beamFX.sectionOverlap = config.sectionOverlap;
                 
-                // Update end rotation for effects
-                Quaternion targetRotation = hasHit ? 
-                    Quaternion.FromToRotation(Vector3.right, hitNormal) : firePoint.rotation;
+                // Get beam positions from physics
+                Vector3[] beamPositions = beamPhysics.GetBeamPositions();
                 
-                // Update visual effects with null check
-                if (beamFX != null)
+                // If we have at least start and end positions
+                if (beamPositions != null && beamPositions.Length >= 2)
                 {
-                    Vector3 effectEndPos = beamPhysics.GetEndPosition();
-                    
-                    beamFX.PlayFlareEffects(startPos, effectEndPos, firePoint.rotation, targetRotation);
-                    
-                    if (hasHit)
+                    if (beamPositions.Length > 10)
                     {
-                        beamFX.PlayImpactEffect(effectEndPos, hitNormal);
+                        // For complex curved beams, use the full curve
+                        beamFX.UpdateCurvedBeamAnimation(beamPositions);
+                    }
+                    else
+                    {
+                        // For simple beams, just use start and end
+                        beamFX.UpdateBeamMiddleAnimation(beamPositions[0], beamPositions[beamPositions.Length - 1]);
+                    }
+                    
+                    // Update flare effects
+                    Vector3 startPos = beamPositions[0];
+                    Vector3 endPos = beamPositions[beamPositions.Length - 1];
+                    
+                    // Calculate rotations for flare effects
+                    Quaternion startRot = Quaternion.LookRotation(Vector3.forward, Vector3.up);
+                    Quaternion endRot = didHit ? 
+                        Quaternion.FromToRotation(Vector3.up, hitNormal) : 
+                        Quaternion.LookRotation(Vector3.forward, Vector3.up);
+                    
+                    beamFX.PlayFlareEffects(startPos, endPos, startRot, endRot);
+                    
+                    // Update impact effect
+                    if (didHit)
+                    {
+                        beamFX.PlayImpactEffect(endPos, hitNormal);
                     }
                     else
                     {
                         beamFX.StopImpactEffect();
                     }
-                    
-                    // Update beam animation with physics points
-                    beamFX.UpdateCurvedBeamAnimation(beamPhysics.GetBeamPositions());
                 }
-            }
-            else
-            {
-                Debug.LogError("Beam physics is null during beam update");
-                StopBeam();
-            }
-            
-            // Sync FX settings
-            if (beamFX != null)
-            {
-                beamFX.beamWidth = config.beamWidth;
-                beamFX.beamSectionDistance = config.beamSectionDistance;
-                beamFX.sectionOverlap = config.sectionOverlap;
             }
         }
         
@@ -459,6 +453,17 @@ namespace Weapons
             }
             
             StopBeamInternal();
+            
+            // After stopping, clean up more thoroughly if using custom range
+            if (isUsingCustomRangeSystem)
+            {
+                // Don't call CleanupAllBeamComponents() directly to avoid removing physics component
+                // Just ensure visual elements are hidden/cleaned up
+                if (beamFX != null)
+                {
+                    beamFX.CleanupAllEffects();
+                }
+            }
         }
         
         private void StopBeamInternal()
@@ -760,9 +765,9 @@ namespace Weapons
             // Only show the GUI if enabled and in play mode
             if (Application.isPlaying && config.showPositionAdjustmentGUI && isFiringBeam)
             {
-                // Make the GUI box taller to fit two sliders
-                Rect positionRect = new Rect(20, Screen.height - 120, 250, 100);
-                GUI.Box(positionRect, "Beam Position Adjustment");
+                // Make the GUI box taller to fit three sliders
+                Rect positionRect = new Rect(20, Screen.height - 160, 250, 140);
+                GUI.Box(positionRect, "Beam Adjustment");
                 
                 // Height slider
                 Rect heightSliderRect = new Rect(
@@ -813,6 +818,36 @@ namespace Weapons
                 
                 GUI.Label(new Rect(forwardSliderRect.x, forwardSliderRect.y + 5, 50, 20), "Back");
                 GUI.Label(new Rect(forwardSliderRect.x + forwardSliderRect.width - 40, forwardSliderRect.y + 5, 50, 20), "Forward");
+                
+                // Range slider
+                Rect rangeSliderRect = new Rect(
+                    positionRect.x + 10, 
+                    positionRect.y + 110, 
+                    positionRect.width - 20, 
+                    20
+                );
+                
+                GUI.Label(new Rect(rangeSliderRect.x, rangeSliderRect.y - 15, 100, 20), "Range:");
+                
+                // Allow range adjustment between 5 and 30
+                float newRange = GUI.HorizontalSlider(
+                    rangeSliderRect, 
+                    config.beamRange, 
+                    5f, 
+                    30f
+                );
+                
+                if (Mathf.Abs(newRange - config.beamRange) > 0.1f)
+                {
+                    config.beamRange = newRange;
+                }
+                
+                GUI.Label(new Rect(rangeSliderRect.x, rangeSliderRect.y + 5, 50, 20), "Short");
+                GUI.Label(new Rect(rangeSliderRect.x + rangeSliderRect.width - 40, rangeSliderRect.y + 5, 50, 20), "Long");
+                
+                // Show the current range value
+                GUI.Label(new Rect(positionRect.x + positionRect.width / 2 - 30, rangeSliderRect.y + 5, 60, 20), 
+                         config.beamRange.ToString("F1") + " units");
             }
         }
         
@@ -828,6 +863,129 @@ namespace Weapons
                     physicsComponent.enabled = true;
                 }
             }
+        }
+        
+        // Modify the UpdateBeamRange method to handle low range values
+        public void UpdateBeamRange(float range)
+        {
+            // Update the config
+            config.beamRange = Mathf.Max(0.1f, range); // Ensure minimum range to prevent issues
+            
+            // Mark that we're using the custom range system
+            isUsingCustomRangeSystem = true;
+            
+            // Force cleanup and reinitialize when range changes significantly
+            if (beamPhysics != null)
+            {
+                // Get the current physics component
+                MonoBehaviour currentPhysics = beamPhysics as MonoBehaviour;
+                
+                // Destroy it to ensure clean state
+                if (currentPhysics != null)
+                {
+                    Destroy(currentPhysics);
+                    beamPhysics = null;
+                }
+            }
+            
+            // Re-initialize the beam physics with new range
+            InitializeBeamPhysics();
+            
+            // If beam is active, refresh it
+            if (isFiringBeam)
+            {
+                RefreshBeamPhysics();
+            }
+        }
+        
+        // Add this method to the BeamWeapon class
+        private void OnEnable()
+        {
+            // Cleanup any existing physics components to prevent duplicates
+            CleanupBeamPhysics();
+        }
+        
+        // Add this method to cleanup existing physics components
+        private void CleanupBeamPhysics()
+        {
+            // Remove any existing beam physics components to prevent duplicates
+            RopeBeamPhysics[] ropePhysics = GetComponents<RopeBeamPhysics>();
+            foreach (var physics in ropePhysics)
+            {
+                if (physics != beamPhysics as RopeBeamPhysics)
+                {
+                    Destroy(physics);
+                }
+            }
+            
+            SmoothCurveBeamPhysics[] curvePhysics = GetComponents<SmoothCurveBeamPhysics>();
+            foreach (var physics in curvePhysics)
+            {
+                if (physics != beamPhysics as SmoothCurveBeamPhysics)
+                {
+                    Destroy(physics);
+                }
+            }
+            
+            // Also check for duplicate LineRenderers that might be creating a second beam
+            LineRenderer[] lineRenderers = GetComponents<LineRenderer>();
+            if (lineRenderers.Length > 1)
+            {
+                // Keep only the one being used by our beam physics
+                foreach (var lr in lineRenderers)
+                {
+                    // If this isn't attached to active beam physics, destroy it
+                    bool usedByPhysics = false;
+                    if (beamPhysics != null)
+                    {
+                        MonoBehaviour physicsComponent = beamPhysics as MonoBehaviour;
+                        if (physicsComponent != null && physicsComponent.GetComponent<LineRenderer>() == lr)
+                        {
+                            usedByPhysics = true;
+                        }
+                    }
+                    
+                    if (!usedByPhysics)
+                    {
+                        Destroy(lr);
+                    }
+                }
+            }
+        }
+        
+        // Add this method to very thoroughly clean up ALL beam components
+        private void CleanupAllBeamComponents()
+        {
+            // Destroy ALL physics components
+            foreach (RopeBeamPhysics physics in GetComponents<RopeBeamPhysics>())
+            {
+                Destroy(physics);
+            }
+            
+            foreach (SmoothCurveBeamPhysics physics in GetComponents<SmoothCurveBeamPhysics>())
+            {
+                Destroy(physics);
+            }
+            
+            foreach (SimpleBeamPhysics physics in GetComponents<SimpleBeamPhysics>())
+            {
+                Destroy(physics);
+            }
+            
+            // Destroy ALL LineRenderers (they'll be recreated by the physics)
+            foreach (LineRenderer lr in GetComponents<LineRenderer>())
+            {
+                Destroy(lr);
+            }
+            
+            // Reset beam FX to clear all sections
+            if (beamFX != null)
+            {
+                beamFX.ResetBeamSections();
+            }
+            
+            // Set to null to ensure we re-initialize
+            beamPhysics = null;
         }
     }
 }

@@ -27,6 +27,13 @@ namespace Weapons.BeamPhysics
             this.config = config;
             this.firePoint = firePoint;
             
+            // Ensure a minimum range to prevent visual glitches
+            if (config.beamRange < 0.1f)
+            {
+                Debug.LogWarning("Beam range very low, forcing minimum of 0.1 to prevent visual issues");
+                config.beamRange = 0.1f;
+            }
+            
             // Set up the line renderer
             if (beamLine == null)
             {
@@ -88,7 +95,19 @@ namespace Weapons.BeamPhysics
         
         public void UpdateBeam(Vector3 startPos, Vector3 endPos, Vector3 fireDirection)
         {
-            // Apply height offset and forward offset to start position
+            // Ensure we have a minimum distance to prevent visual glitches
+            float minimumBeamLength = 0.1f;
+            
+            // Calculate current distance and enforce range
+            // Strictly enforce maximum range
+            float currentDistance = Vector3.Distance(startPos, endPos);
+            if (currentDistance > config.beamRange)
+            {
+                // Clamp the end position to the maximum range
+                endPos = startPos + fireDirection * config.beamRange;
+            }
+            
+            // Apply height and forward offsets
             Vector3 heightOffset = Vector3.up * config.beamHeightOffset;
             Vector3 forwardOffset = fireDirection * config.beamForwardOffset;
             

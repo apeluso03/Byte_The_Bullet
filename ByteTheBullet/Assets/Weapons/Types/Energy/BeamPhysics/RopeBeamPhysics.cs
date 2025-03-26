@@ -111,7 +111,15 @@ namespace Weapons.BeamPhysics
         
         public void UpdateBeam(Vector3 startPos, Vector3 endPos, Vector3 fireDirection)
         {
-            // Apply height offset and forward offset to start position
+            // Strictly enforce maximum range
+            float currentDistance = Vector3.Distance(startPos, endPos);
+            if (currentDistance > config.beamRange)
+            {
+                // Clamp the end position to the maximum range
+                endPos = startPos + fireDirection * config.beamRange;
+            }
+            
+            // Apply height and forward offsets
             Vector3 heightOffset = Vector3.up * config.beamHeightOffset;
             Vector3 forwardOffset = fireDirection * config.beamForwardOffset;
             

@@ -223,6 +223,70 @@ namespace Weapons.Editor
                 EditorGUILayout.HelpBox("Hold fire button to charge. Beam will automatically fire when fully charged.", MessageType.Info);
             }
             
+            EditorGUILayout.Space(5);
+            EditorGUILayout.LabelField("Range Settings", EditorStyles.boldLabel);
+
+            SerializedProperty beamRangeProp = configProperty.FindPropertyRelative("beamRange");
+
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(beamRangeProp, new GUIContent("Beam Range"));
+            if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+            {
+                // Apply immediately in play mode
+                serializedObject.ApplyModifiedProperties();
+                
+                // Update beam range
+                beamWeapon.UpdateBeamRange(beamRangeProp.floatValue);
+            }
+
+            // Add a helpful visualization of the range
+            if (beamRangeProp.floatValue > 0)
+            {
+                Rect progressRect = EditorGUILayout.GetControlRect(false, 20);
+                // Draw a background
+                EditorGUI.DrawRect(progressRect, new Color(0.2f, 0.2f, 0.2f));
+                
+                // Calculate width based on a reasonable max range (e.g., 30 units)
+                float maxDisplayRange = 30f;
+                float normalizedRange = Mathf.Clamp01(beamRangeProp.floatValue / maxDisplayRange);
+                
+                // Draw the range bar
+                Rect rangeRect = new Rect(progressRect.x, progressRect.y, progressRect.width * normalizedRange, progressRect.height);
+                EditorGUI.DrawRect(rangeRect, new Color(0.3f, 0.7f, 0.9f));
+                
+                // Draw a label showing the exact range
+                string rangeText = beamRangeProp.floatValue.ToString("F1") + " units";
+                GUIStyle centeredStyle = new GUIStyle(EditorStyles.boldLabel);
+                centeredStyle.alignment = TextAnchor.MiddleCenter;
+                EditorGUI.LabelField(progressRect, rangeText, centeredStyle);
+                
+                // Show a warning if range is set extremely high
+                if (beamRangeProp.floatValue > maxDisplayRange)
+                {
+                    EditorGUILayout.HelpBox("Very high beam range may impact performance.", MessageType.Info);
+                }
+            }
+
+            // Add range testing buttons in play mode
+            if (Application.isPlaying)
+            {
+                EditorGUILayout.BeginHorizontal();
+                
+                if (GUILayout.Button("Increase Range"))
+                {
+                    beamWeapon.config.beamRange += 2f;
+                    beamWeapon.UpdateBeamRange(beamWeapon.config.beamRange);
+                }
+                
+                if (GUILayout.Button("Decrease Range"))
+                {
+                    beamWeapon.config.beamRange = Mathf.Max(1f, beamWeapon.config.beamRange - 2f);
+                    beamWeapon.UpdateBeamRange(beamWeapon.config.beamRange);
+                }
+                
+                EditorGUILayout.EndHorizontal();
+            }
+            
             EditorGUI.indentLevel--;
             
             // Damage section below Firing Settings
