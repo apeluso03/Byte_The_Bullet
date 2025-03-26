@@ -23,10 +23,11 @@ namespace Weapons
         
         #region Weapon Properties
         [Header("Weapon Info")]
-        [SerializeField] protected string weaponName = "Standard Weapon";
-        [SerializeField] protected string weaponType = "Standard";
-        [SerializeField] protected string rarity = "Common";
-        [SerializeField] protected string description = "";
+        [SerializeField] public string weaponName = "Standard Weapon";
+        [SerializeField] public string weaponType = "Standard";
+        [SerializeField] public string rarity = "Common";
+        [TextArea(3, 5)]
+        [SerializeField] public string description = "";
         
         [Header("Damage Settings")]
         [SerializeField] public float damage = 10f;
@@ -51,6 +52,7 @@ namespace Weapons
         [SerializeField] public GameObject projectilePrefab;
         [SerializeField] public Transform firePoint;
         [SerializeField] public float projectileSpeed = 20f;
+        [Range(0, 1)]
         [SerializeField] public float accuracy = 0.8f; // 0-1, higher is more accurate
         
         [Header("Range Settings")]

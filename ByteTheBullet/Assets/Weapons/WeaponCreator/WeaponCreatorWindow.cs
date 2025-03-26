@@ -220,9 +220,9 @@ public class WeaponCreatorWindow : EditorWindow
         // Add a sprite renderer if we have a sprite
         if (weaponSprite != null)
         {
-        SpriteRenderer spriteRenderer = weaponObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = weaponSprite;
-        spriteRenderer.sortingLayerName = "InFrontOfPlayer";
+            SpriteRenderer spriteRenderer = weaponObject.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = weaponSprite;
+            spriteRenderer.sortingLayerName = "InFrontOfPlayer";
             spriteRenderer.sortingOrder = 10;
             
             // Apply rarity color tint
@@ -278,25 +278,17 @@ public class WeaponCreatorWindow : EditorWindow
         firePoint.transform.SetParent(weaponObject.transform);
         firePoint.transform.localPosition = new Vector3(0.5f, 0, 0);
         
-        // Add the metadata component
-        WeaponMetadata metadata = weaponObject.AddComponent<WeaponMetadata>();
-        metadata.weaponName = weaponName;
-        metadata.weaponType = "Shotgun";
-        metadata.rarity = rarityOptions[selectedRarity];
-        metadata.fireType = "SemiAuto";
-        metadata.description = weaponDescription;
-        
         // Default values
         float defaultDamage = 10f;
         int defaultMagazineSize = 8;
         float defaultFireRate = 4f;
         
-        metadata.damage = defaultDamage;
-        metadata.fireRate = defaultFireRate;
-        metadata.magazineSize = defaultMagazineSize;
-        
-        // Add the shotgun weapon component
+        // Add the shotgun weapon component - set properties directly
         ShotgunWeapon shotgun = weaponObject.AddComponent<ShotgunWeapon>();
+        shotgun.weaponName = weaponName;
+        shotgun.weaponType = "Shotgun";
+        shotgun.rarity = rarityOptions[selectedRarity];
+        shotgun.description = weaponDescription;
         shotgun.damage = defaultDamage;
         shotgun.magazineSize = defaultMagazineSize;
         shotgun.shotgunFireRate = defaultFireRate;
@@ -314,9 +306,9 @@ public class WeaponCreatorWindow : EditorWindow
         if (playerGameObject == null)
         {
             message += "⚠️ Player reference not found. You need to manually set up the WeaponAiming component.\n\n";
-            }
-            else
-            {
+        }
+        else
+        {
             bool missingReferences = false;
             if (aiming.weaponPointLeft == null || aiming.weaponPointRight == null)
             {
@@ -402,26 +394,19 @@ public class WeaponCreatorWindow : EditorWindow
         firePoint.transform.SetParent(weaponObject.transform);
         firePoint.transform.localPosition = new Vector3(0.5f, 0, 0);
         
-        // Add the metadata component
-        WeaponMetadata metadata = weaponObject.AddComponent<WeaponMetadata>();
-        metadata.weaponName = weaponName;
-        metadata.weaponType = "Beam";
-        metadata.rarity = rarityOptions[selectedRarity];
-        metadata.fireType = "Beam";
-        metadata.damageType = "Energy";
-        metadata.description = weaponDescription;
+        // Add the beam weapon component and set properties directly
+        BeamWeapon beamWeapon = weaponObject.AddComponent<BeamWeapon>();
+        beamWeapon.weaponName = weaponName;
+        beamWeapon.weaponType = "Beam";
+        beamWeapon.rarity = rarityOptions[selectedRarity];
+        beamWeapon.damageType = "Energy";
+        beamWeapon.description = weaponDescription;
         
         // Default values for beam weapon
-        float defaultDamage = 30f; // Damage per second for beam
+        float defaultDamage = 30f;
         int defaultEnergy = 100;
         float defaultRegenRate = 15f;
         
-        metadata.damage = defaultDamage;
-        metadata.fireRate = defaultRegenRate;
-        metadata.magazineSize = defaultEnergy;
-        
-        // Add the beam weapon component
-        BeamWeapon beamWeapon = weaponObject.AddComponent<BeamWeapon>();
         beamWeapon.damage = defaultDamage;
         beamWeapon.config.beamDamagePerSecond = defaultDamage;
         beamWeapon.config.maxEnergy = defaultEnergy;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 namespace Weapons.Editor
 {
@@ -8,12 +9,85 @@ namespace Weapons.Editor
     {
         private bool showFreezeRaySettings = true;
         
+        // List of property names to exclude from inspector
+        private readonly List<string> excludedProperties = new List<string>
+        {
+            "onFire", 
+            "onAmmoChanged", 
+            "onReloadStart", 
+            "onReloadComplete", 
+            "onOutOfAmmo"
+        };
+        
+        // SerializedProperty for the weapon name
+        private SerializedProperty weaponNameProperty;
+        
+        private void OnEnable()
+        {
+            // Get the weapon name property
+            weaponNameProperty = serializedObject.FindProperty("weaponName");
+        }
+        
         public override void OnInspectorGUI()
         {
             BeamWeapon beamWeapon = (BeamWeapon)target;
             
-            // Draw default inspector
-            DrawDefaultInspector();
+            // Update the serialized object
+            serializedObject.Update();
+            
+            // Custom Inspector Layout
+            EditorGUILayout.Space(5);
+            EditorGUILayout.LabelField("Weapon Info", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            
+            // Draw the name property using Unity's standard PropertyField
+            string oldName = beamWeapon.weaponName;
+            
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(weaponNameProperty);
+            
+            if (EditorGUI.EndChangeCheck() && beamWeapon.weaponName != oldName)
+            {
+                // Also update the GameObject name to match
+                Undo.RecordObject(beamWeapon.gameObject, "Change GameObject Name");
+                beamWeapon.gameObject.name = beamWeapon.weaponName;
+                EditorUtility.SetDirty(beamWeapon.gameObject);
+                
+                // Force scene save
+                if (!Application.isPlaying)
+                {
+                    UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(beamWeapon.gameObject.scene);
+                }
+            }
+            
+            // Draw weapon type field
+            SerializedProperty weaponTypeProp = serializedObject.FindProperty("weaponType");
+            if (weaponTypeProp != null)
+            {
+                EditorGUILayout.PropertyField(weaponTypeProp);
+            }
+            
+            // Draw damage type
+            SerializedProperty damageTypeProp = serializedObject.FindProperty("damageType");
+            if (damageTypeProp != null)
+            {
+                EditorGUILayout.PropertyField(damageTypeProp);
+            }
+            
+            // Draw damage property
+            SerializedProperty damageProp = serializedObject.FindProperty("damage");
+            if (damageProp != null)
+            {
+                EditorGUILayout.PropertyField(damageProp);
+            }
+            
+            EditorGUI.indentLevel--;
+            
+            // Draw all remaining properties except excluded ones
+            DrawPropertiesExcluding(serializedObject, excludedProperties.ToArray());
+            
+            // Apply modified properties
+            serializedObject.ApplyModifiedProperties();
             
             // Beam visibility toggle
             EditorGUILayout.Space(10);

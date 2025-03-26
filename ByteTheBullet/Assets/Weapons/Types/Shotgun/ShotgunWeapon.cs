@@ -69,9 +69,6 @@ namespace Weapons
         private bool isBurstFiring = false;
         private int currentPelletIndex = 0;
         
-        // Cache the metadata component
-        private WeaponMetadata metadata;
-        
         // Public property to expose the protected maxReserveAmmo
         public int MaxReserveAmmo
         {
@@ -107,15 +104,6 @@ namespace Weapons
         protected override void Awake()
         {
             base.Awake();
-            
-            // Cache metadata component
-            metadata = GetComponent<WeaponMetadata>();
-            
-            // Sync values with metadata if present
-            if (metadata != null)
-            {
-                SyncWithMetadata();
-            }
             
             // Additional shotgun-specific initialization
             // If no fire point assigned, look for one
@@ -613,99 +601,40 @@ namespace Weapons
         [Range(0f, 0.3f)]
         public float pitchVariation = 0.1f;
 
-        // Property to get/set weapon name 
+        // Property to get/set weapon name - use BaseWeapon's fields directly
         public string WeaponName 
         {
-            get 
-            { 
-                if (metadata != null)
-                    return metadata.weaponName;
-                return weaponName; // Fallback to BaseWeapon's property
-            }
+            get { return weaponName; }
             set
             {
                 // Update the weapon component name
                 weaponName = value;
-                
-                // Update the metadata if available
-                if (metadata != null)
-                    metadata.weaponName = value;
                 
                 // Update the GameObject name
                 gameObject.name = value;
             }
         }
 
-        // Property to get/set weapon description
+        // Property to get/set weapon description - use BaseWeapon's fields directly
         public string WeaponDescription
         {
-            get 
-            { 
-                if (metadata != null)
-                    return metadata.description;
-                return description; // Fallback to BaseWeapon's property
-            }
+            get { return description; }
             set
             {
                 // Update the weapon component description
                 description = value;
-                
-                // Update the metadata if available
-                if (metadata != null)
-                    metadata.description = value;
             }
         }
 
-        // Property to get/set weapon rarity
+        // Property to get/set weapon rarity - use BaseWeapon's fields directly
         public string WeaponRarity
         {
-            get 
-            { 
-                if (metadata != null)
-                    return metadata.rarity;
-                return rarity; // Fallback to BaseWeapon's property
-            }
+            get { return rarity; }
             set
             {
                 // Update the weapon component rarity
                 rarity = value;
-                
-                // Update the metadata if available
-                if (metadata != null)
-                    metadata.rarity = value;
             }
-        }
-
-        // Method to sync data with the metadata component
-        public void SyncWithMetadata()
-        {
-            if (metadata == null)
-                return;
-                
-            // Sync from metadata to weapon properties
-            weaponName = metadata.weaponName;
-            description = metadata.description;
-            rarity = metadata.rarity;
-            damage = metadata.damage;
-            magazineSize = metadata.magazineSize;
-            
-            // Update the GameObject name
-            gameObject.name = weaponName;
-        }
-
-        // Method to sync data from weapon to metadata
-        public void UpdateMetadata()
-        {
-            if (metadata == null)
-                return;
-            
-            // Sync from weapon properties to metadata
-            metadata.weaponName = weaponName;
-            metadata.description = description;
-            metadata.rarity = rarity;
-            metadata.damage = damage;
-            metadata.magazineSize = magazineSize;
-            metadata.fireRate = shotgunFireRate;
         }
 
         // Add this to reset weapon state when disabled
