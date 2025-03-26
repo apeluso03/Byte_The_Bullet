@@ -29,7 +29,15 @@ namespace Weapons.Editor
             "magazineSize",
             "currentAmmo",
             "reserveAmmo",
-            "maxReserveAmmo"
+            "maxReserveAmmo",
+            
+            // Additional properties to hide from BaseWeapon
+            "fireRate",           // Hide fire rate from base weapon
+            "fireMode",           // Hide fire mode from base weapon (we have our own)
+            "nextFireTime",       // Hide next fire time 
+            "maxChargeTime",      // Hide the base weapon charge time
+            "maxChargeDamageMultiplier", // Hide base weapon charge multiplier
+            "isReloading"         // Hide reload state
         };
         
         // SerializedProperty for the weapon name
@@ -295,9 +303,9 @@ namespace Weapons.Editor
             
             EditorGUI.indentLevel--;
             
-            // Fire Mode Settings
+            // After the Damage Settings section
             EditorGUILayout.Space(10);
-            EditorGUILayout.LabelField("Fire Mode Settings", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Firing Settings", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             
             // Fire mode dropdown
@@ -307,7 +315,21 @@ namespace Weapons.Editor
             // Show relevant settings based on selected fire mode
             BeamWeaponConfig.BeamFireMode selectedMode = (BeamWeaponConfig.BeamFireMode)fireModeProp.enumValueIndex;
             
-            if (selectedMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
+            if (selectedMode == BeamWeaponConfig.BeamFireMode.Continuous)
+            {
+                SerializedProperty continuousChargeTimeProp = configProperty.FindPropertyRelative("continuousChargeTime");
+                EditorGUILayout.PropertyField(continuousChargeTimeProp, new GUIContent("Charge-up Time"));
+                
+                if (continuousChargeTimeProp.floatValue > 0)
+                {
+                    EditorGUILayout.HelpBox("Beam requires a brief charge-up before firing continuously.", MessageType.Info);
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("Beam fires immediately with no charge-up time.", MessageType.Info);
+                }
+            }
+            else if (selectedMode == BeamWeaponConfig.BeamFireMode.ChargeBurst)
             {
                 SerializedProperty maxChargeTimeProp = configProperty.FindPropertyRelative("maxChargeTime");
                 SerializedProperty maxChargeDmgMultProp = configProperty.FindPropertyRelative("maxChargeDamageMultiplier");
@@ -318,6 +340,63 @@ namespace Weapons.Editor
                 EditorGUILayout.PropertyField(maxChargeDmgMultProp, new GUIContent("Damage Multiplier"));
                 
                 EditorGUILayout.HelpBox("Hold fire button to charge. Beam will automatically fire when fully charged.", MessageType.Info);
+            }
+            
+            EditorGUI.indentLevel--;
+            
+            // Add a new Visual FX section after Firing Settings or before Freeze Ray Presets
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Visual FX Settings", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+            
+            // Beam FX prefabs
+            SerializedProperty chargeFXProp = configProperty.FindPropertyRelative("chargeFXPrefab");
+            SerializedProperty flareFXProp = configProperty.FindPropertyRelative("flareFXPrefab");
+            SerializedProperty impactFXProp = configProperty.FindPropertyRelative("impactFXPrefab");
+            SerializedProperty beamMiddleProp = configProperty.FindPropertyRelative("beamMiddleAnimPrefab");
+            
+            EditorGUILayout.PropertyField(chargeFXProp, new GUIContent("Charge Effect Prefab"));
+            EditorGUILayout.PropertyField(flareFXProp, new GUIContent("Flare Effect Prefab"));
+            EditorGUILayout.PropertyField(impactFXProp, new GUIContent("Impact Effect Prefab"));
+            EditorGUILayout.PropertyField(beamMiddleProp, new GUIContent("Beam Middle Prefab"));
+            
+            // Beam visual properties
+            SerializedProperty beamWidthProp = configProperty.FindPropertyRelative("beamWidth");
+            SerializedProperty beamSectionDistanceProp = configProperty.FindPropertyRelative("beamSectionDistance");
+            SerializedProperty sectionOverlapProp = configProperty.FindPropertyRelative("sectionOverlap");
+            
+            EditorGUILayout.PropertyField(beamWidthProp, new GUIContent("Beam Width"));
+            EditorGUILayout.PropertyField(beamSectionDistanceProp, new GUIContent("Section Distance"));
+            EditorGUILayout.PropertyField(sectionOverlapProp, new GUIContent("Section Overlap"));
+            
+            EditorGUILayout.HelpBox("These prefabs will be used by the beam's visual effects system. The beam middle prefab is particularly important as it forms the visible beam.", MessageType.Info);
+            
+            // Add this after the Visual FX Settings section
+            if (chargeFXProp.objectReferenceValue == null || 
+                flareFXProp.objectReferenceValue == null || 
+                impactFXProp.objectReferenceValue == null || 
+                beamMiddleProp.objectReferenceValue == null)
+            {
+                EditorGUILayout.HelpBox("Some FX prefabs are not assigned. The beam may not display correctly without these.", MessageType.Warning);
+                
+                if (GUILayout.Button("Use Default FX Prefabs"))
+                {
+                    // Try to find default prefabs in the project
+                    if (chargeFXProp.objectReferenceValue == null)
+                        chargeFXProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Weapons/Prefabs/FX/ChargeEffect.prefab");
+                        
+                    if (flareFXProp.objectReferenceValue == null)
+                        flareFXProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Weapons/Prefabs/FX/FlareEffect.prefab");
+                        
+                    if (impactFXProp.objectReferenceValue == null)
+                        impactFXProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Weapons/Prefabs/FX/ImpactEffect.prefab");
+                        
+                    if (beamMiddleProp.objectReferenceValue == null)
+                        beamMiddleProp.objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Weapons/Prefabs/FX/BeamMiddle.prefab");
+                        
+                    serializedObject.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(beamWeapon);
+                }
             }
             
             EditorGUI.indentLevel--;
@@ -508,14 +587,7 @@ namespace Weapons.Editor
                 }
             }
             
-            // Auto-Reload When Empty
-            SerializedProperty autoReloadProp = configProperty.FindPropertyRelative("autoReloadWhenDepleted");
-            EditorGUILayout.PropertyField(autoReloadProp, new GUIContent("Auto-Reload When Empty"));
-            
-            if (autoReloadProp.boolValue)
-            {
-                EditorGUILayout.HelpBox("Weapon will automatically reload a battery when energy is depleted.", MessageType.Info);
-            }
+
         }
         
         // Simulate a 360° spin to test the beam curve

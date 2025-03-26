@@ -54,6 +54,21 @@ namespace Weapons
                 }
             }
             
+            // Configure the BeamWeaponFX with our config values
+            if (beamFX != null)
+            {
+                // Set prefabs from config
+                beamFX.chargeFXPrefab = config.chargeFXPrefab;
+                beamFX.flareFXPrefab = config.flareFXPrefab;
+                beamFX.impactFXPrefab = config.impactFXPrefab;
+                beamFX.beamMiddleAnimPrefab = config.beamMiddleAnimPrefab;
+                
+                // Set beam visual properties - using the single beamWidth property
+                beamFX.beamWidth = config.beamWidth;
+                beamFX.beamSectionDistance = config.beamSectionDistance;
+                beamFX.sectionOverlap = config.sectionOverlap;
+            }
+            
             // Add energy manager
             energyManager = gameObject.AddComponent<BeamWeaponEnergy>();
             energyManager.Initialize(this, config, audioSource);
@@ -186,25 +201,27 @@ namespace Weapons
             switch (config.fireMode)
             {
                 case BeamWeaponConfig.BeamFireMode.Continuous:
-                    // Existing continuous beam logic
-                    if (config.useChargeEffect && config.chargeTime > 0)
+                    // Check if there's a charge-up time set for continuous mode
+                    if (config.continuousChargeTime > 0f)
                     {
                         if (!isCharging)
                         {
                             if (chargeCoroutine != null)
                                 StopCoroutine(chargeCoroutine);
-                                
-                            chargeCoroutine = StartCoroutine(ChargeAndFireBeam());
+                            
+                            // Use the continuous charge time
+                            chargeCoroutine = StartCoroutine(ContinuousChargeBeam());
                         }
                     }
                     else
                     {
+                        // No charge time, fire immediately
                         ActivateBeam();
                     }
                     break;
                     
                 case BeamWeaponConfig.BeamFireMode.ChargeBurst:
-                    // Start charging, then auto-fire
+                    // Start charging for burst
                     chargeStartTime = Time.time;
                     isChargedShot = true;
                     
@@ -226,7 +243,7 @@ namespace Weapons
             }
         }
         
-        private IEnumerator ChargeAndFireBeam()
+        private IEnumerator ContinuousChargeBeam()
         {
             isCharging = true;
             
@@ -242,8 +259,8 @@ namespace Weapons
                 beamFX.PlayChargeEffect(firePoint);
             }
             
-            // Wait for charge duration
-            yield return new WaitForSeconds(config.chargeTime);
+            // Wait for continuous charge duration
+            yield return new WaitForSeconds(config.continuousChargeTime);
             
             // Fire the beam
             ActivateBeam();
@@ -324,9 +341,8 @@ namespace Weapons
                 // Stop the beam
                 StopBeam();
                 
-                // If using battery reload with auto-reload enabled and we have batteries, auto-reload
+                // If using battery reload and we have batteries, auto-reload
                 if (config.energySystemType == BeamWeaponConfig.EnergySystemType.BatteryReload && 
-                    config.autoReloadWhenDepleted &&
                     config.CurrentBatteryCount > 0)
                 {
                     StartCoroutine(AutoReloadBattery());
@@ -621,6 +637,41 @@ namespace Weapons
         public IEnumerator ReloadBattery()
         {
             yield return StartCoroutine(AutoReloadBattery());
+        }
+        
+        private bool ValidateFXPrefabs()
+        {
+            if (config.chargeFXPrefab == null)
+            {
+                Debug.LogWarning($"Beam weapon '{weaponName}' is missing Charge FX Prefab");
+                return false;
+            }
+            
+            if (config.flareFXPrefab == null)
+            {
+                Debug.LogWarning($"Beam weapon '{weaponName}' is missing Flare FX Prefab");
+                return false;
+            }
+            
+            if (config.impactFXPrefab == null)
+            {
+                Debug.LogWarning($"Beam weapon '{weaponName}' is missing Impact FX Prefab");
+                return false;
+            }
+            
+            if (config.beamMiddleAnimPrefab == null)
+            {
+                Debug.LogWarning($"Beam weapon '{weaponName}' is missing Beam Middle Prefab");
+                return false;
+            }
+            
+            return true;
+        }
+        
+        private void Start()
+        {
+            // Validate that all required FX prefabs are assigned
+            ValidateFXPrefabs();
         }
     }
 }

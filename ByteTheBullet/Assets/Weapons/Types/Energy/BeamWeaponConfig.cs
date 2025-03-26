@@ -8,26 +8,32 @@ namespace Weapons
     [System.Serializable]
     public class BeamWeaponConfig
     {
-        // Define the possible beam fire modes
+        // Define a single fire mode enum with fewer options
         public enum BeamFireMode
         {
             Continuous,  // Standard continuous beam
-            ChargeBurst  // Hold to charge, automatically fires burst when charged
+            ChargeBurst  // Auto-fire burst when charged
         }
         
-        [Header("Beam Fire Modes")]
+        [Header("Beam Firing")]
         [Tooltip("The firing pattern of the beam weapon")]
         public BeamFireMode fireMode = BeamFireMode.Continuous;
         
-        [Tooltip("For charge burst mode: maximum damage multiplier when fully charged")]
-        [Range(1f, 5f)]
-        public float maxChargeDamageMultiplier = 2.5f;
+        // For continuous mode
+        [Tooltip("Time to charge before the continuous beam is ready (seconds)")]
+        [Range(0f, 2f)]
+        public float continuousChargeTime = 0.2f;
         
-        [Tooltip("For charge burst mode: time to reach maximum charge")]
+        // For charge burst mode
+        [Tooltip("Time to reach maximum charge (seconds)")]
         [Range(0.5f, 3f)]
         public float maxChargeTime = 1.5f;
         
-        [Tooltip("For charge burst mode: how long the burst beam fires")]
+        [Tooltip("Damage multiplier at full charge")]
+        [Range(1f, 5f)]
+        public float maxChargeDamageMultiplier = 2.5f;
+        
+        [Tooltip("How long the burst fires (seconds)")]
         [Range(0.1f, 2.0f)]
         public float burstDuration = 0.5f;
         
@@ -81,7 +87,7 @@ namespace Weapons
         public float beamRange = 20f;
         
         [Tooltip("Width of the beam")]
-        [Range(0.05f, 0.5f)]
+        [Range(0.05f, 1.0f)]
         public float beamWidth = 0.2f;
         
         [Tooltip("Color of the beam")]
@@ -199,5 +205,26 @@ namespace Weapons
         [Range(0.1f, 10f)]
         [Tooltip("How stiff the beam rope is (higher = less floppy)")]
         public float beamStiffness = 1.0f;
+
+        [Header("Visual FX Prefabs")]
+        [Tooltip("Prefab for the charge effect displayed when charging the beam")]
+        public GameObject chargeFXPrefab;
+
+        [Tooltip("Prefab for the flare effect displayed at beam start and end points")]
+        public GameObject flareFXPrefab;
+
+        [Tooltip("Prefab for the impact effect displayed where the beam hits")]
+        public GameObject impactFXPrefab;
+
+        [Tooltip("Prefab for the beam middle sections")]
+        public GameObject beamMiddleAnimPrefab;
+
+        [Tooltip("Distance between repeated beam middle sprites")]
+        [Range(0.1f, 5.0f)]
+        public float beamSectionDistance = 1.0f;
+
+        [Tooltip("How much sections should overlap (0-1). Higher values close gaps between sections.")]
+        [Range(0f, 0.9f)]
+        public float sectionOverlap = 0.3f;
     }
 }
