@@ -37,6 +37,12 @@ namespace Weapons
             set => currentEnergy = Mathf.Clamp(value, 0, config.maxEnergy);
         }
         
+        // Add this field to BeamWeapon class
+        private Rect heightSliderRect = new Rect(20, Screen.height - 80, 250, 60);
+        
+        // Add this public property to the BeamWeapon class
+        public IBeamPhysics BeamPhysics => beamPhysics;
+        
         protected override void Awake()
         {
             base.Awake();
@@ -744,6 +750,82 @@ namespace Weapons
                         lr.startWidth = width;
                         lr.endWidth = width * 0.7f;
                     }
+                }
+            }
+        }
+        
+        // Update the OnGUI method in BeamWeapon class
+        private void OnGUI()
+        {
+            // Only show the GUI if enabled and in play mode
+            if (Application.isPlaying && config.showPositionAdjustmentGUI && isFiringBeam)
+            {
+                // Make the GUI box taller to fit two sliders
+                Rect positionRect = new Rect(20, Screen.height - 120, 250, 100);
+                GUI.Box(positionRect, "Beam Position Adjustment");
+                
+                // Height slider
+                Rect heightSliderRect = new Rect(
+                    positionRect.x + 10, 
+                    positionRect.y + 30, 
+                    positionRect.width - 20, 
+                    20
+                );
+                
+                GUI.Label(new Rect(heightSliderRect.x, heightSliderRect.y - 15, 100, 20), "Height:");
+                
+                float newHeightOffset = GUI.HorizontalSlider(
+                    heightSliderRect, 
+                    config.beamHeightOffset, 
+                    -1f, 
+                    1f
+                );
+                
+                if (newHeightOffset != config.beamHeightOffset)
+                {
+                    config.beamHeightOffset = newHeightOffset;
+                }
+                
+                GUI.Label(new Rect(heightSliderRect.x, heightSliderRect.y + 5, 50, 20), "Lower");
+                GUI.Label(new Rect(heightSliderRect.x + heightSliderRect.width - 40, heightSliderRect.y + 5, 50, 20), "Higher");
+                
+                // Forward offset slider
+                Rect forwardSliderRect = new Rect(
+                    positionRect.x + 10, 
+                    positionRect.y + 70, 
+                    positionRect.width - 20, 
+                    20
+                );
+                
+                GUI.Label(new Rect(forwardSliderRect.x, forwardSliderRect.y - 15, 100, 20), "Forward:");
+                
+                float newForwardOffset = GUI.HorizontalSlider(
+                    forwardSliderRect, 
+                    config.beamForwardOffset, 
+                    -1f, 
+                    1f
+                );
+                
+                if (newForwardOffset != config.beamForwardOffset)
+                {
+                    config.beamForwardOffset = newForwardOffset;
+                }
+                
+                GUI.Label(new Rect(forwardSliderRect.x, forwardSliderRect.y + 5, 50, 20), "Back");
+                GUI.Label(new Rect(forwardSliderRect.x + forwardSliderRect.width - 40, forwardSliderRect.y + 5, 50, 20), "Forward");
+            }
+        }
+        
+        // Add this method to BeamWeapon class
+        public void RefreshBeamPhysics()
+        {
+            if (beamPhysics != null)
+            {
+                MonoBehaviour physicsComponent = beamPhysics as MonoBehaviour;
+                if (physicsComponent != null)
+                {
+                    physicsComponent.enabled = false;
+                    physicsComponent.enabled = true;
                 }
             }
         }

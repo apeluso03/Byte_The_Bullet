@@ -186,6 +186,13 @@ namespace Weapons
                 if (beamMiddleAnimPrefab != null)
                 {
                     GameObject newSection = Instantiate(beamMiddleAnimPrefab);
+                    
+                    // Ensure consistent scaling for all sections
+                    if (beamMiddleInstances.Count > 0 && beamMiddleInstances[0] != null)
+                    {
+                        newSection.transform.localScale = beamMiddleInstances[0].transform.localScale;
+                    }
+                    
                     beamMiddleInstances.Add(newSection);
                 }
             }
@@ -203,29 +210,59 @@ namespace Weapons
                 }
             }
             
+            // Get the base size of a beam section to ensure proper scaling and alignment
+            float sectionBaseWidth = 1f;
+            float sectionBaseLength = 1f;
+            
+            if (beamMiddleInstances.Count > 0 && beamMiddleInstances[0] != null)
+            {
+                // Try to get sprite renderer to determine actual dimensions
+                SpriteRenderer sr = beamMiddleInstances[0].GetComponentInChildren<SpriteRenderer>();
+                if (sr != null && sr.sprite != null)
+                {
+                    sectionBaseWidth = sr.sprite.bounds.size.y;
+                    sectionBaseLength = sr.sprite.bounds.size.x;
+                }
+            }
+            
+            // Apply consistent width scaling to all sections
+            float widthScale = beamWidth / sectionBaseWidth;
+            
             // Position and rotate each active section
             for (int i = 0; i < sectionsNeeded; i++)
             {
                 GameObject section = beamMiddleInstances[i];
                 if (section == null) continue;
                 
+                // Apply consistent width scaling
+                Vector3 scale = section.transform.localScale;
+                scale.y = widthScale;
+                
                 // Calculate position - place sections with overlap
                 float distanceFromStart = i * effectiveDistance;
                 
-                // Don't let the last section extend beyond the endpoint
+                // For the last section, calculate exact length needed
                 if (i == sectionsNeeded - 1)
                 {
-                    // The last section might need special positioning
                     float remainingDistance = beamLength - (i * effectiveDistance);
+                    
+                    // Scale the last section to fit exactly
                     if (remainingDistance < beamSectionDistance)
                     {
-                        // Scale the last section to fit exactly
                         float scaleRatio = remainingDistance / beamSectionDistance;
-                        section.transform.localScale = new Vector3(scaleRatio, 1f, 1f);
+                        scale.x = scaleRatio;
                     }
                 }
+                else
+                {
+                    // For middle sections, ensure they overlap properly by slight length scaling
+                    scale.x = 1f + (sectionOverlap * 0.1f); // Slightly increase length for better overlap
+                }
                 
-                // Apply position and rotation
+                // Apply scaling
+                section.transform.localScale = scale;
+                
+                // Apply position and rotation - ensure sections line up precisely
                 Vector3 position = startPos + normalizedDir * distanceFromStart;
                 section.transform.position = position;
                 section.transform.rotation = rotation;
@@ -337,18 +374,38 @@ namespace Weapons
                 }
             }
             
-            // Place sections along the curve
+            // Get base section dimensions
+            float sectionBaseWidth = 1f;
+            if (beamMiddleInstances.Count > 0 && beamMiddleInstances[0] != null)
+            {
+                SpriteRenderer sr = beamMiddleInstances[0].GetComponentInChildren<SpriteRenderer>();
+                if (sr != null && sr.sprite != null)
+                {
+                    sectionBaseWidth = sr.sprite.bounds.size.y;
+                }
+            }
+            
+            // Apply consistent width scaling
+            float widthScale = beamWidth / sectionBaseWidth;
+            
+            // Place sections along the curve with precise alignment
             float distanceTraveled = 0;
             int currentPoint = 0;
             Vector3 currentPos = curvePoints[0];
             Vector3 nextPos = curvePoints[1];
             float segmentLength = Vector3.Distance(currentPos, nextPos);
             float segmentTraveled = 0;
+            Vector3 prevPosition = currentPos; // Keep track of previous position for proper alignment
             
             for (int i = 0; i < sectionsNeeded; i++)
             {
                 GameObject section = beamMiddleInstances[i];
                 if (section == null) continue;
+                
+                // Apply width scaling
+                Vector3 scale = section.transform.localScale;
+                scale.y = widthScale;
+                section.transform.localScale = scale;
                 
                 // Calculate target distance for this section
                 float targetDistance = i * effectiveDistance;
@@ -371,6 +428,7 @@ namespace Weapons
                         // Move to next segment
                         float distanceCovered = segmentLength - segmentTraveled;
                         distanceTraveled += distanceCovered;
+                        prevPosition = nextPos; // Store for orientation
                         currentPoint++;
                         
                         if (currentPoint < curvePoints.Length - 1)
@@ -390,14 +448,24 @@ namespace Weapons
                     float t = segmentTraveled / segmentLength;
                     Vector3 position = Vector3.Lerp(currentPos, nextPos, t);
                     
-                    // Calculate direction for rotation
+                    // Calculate direction for rotation - use the exact segment direction
                     Vector3 direction = (nextPos - currentPos).normalized;
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                     Quaternion rotation = Quaternion.Euler(0, 0, angle);
                     
+                    // For better alignment, slightly offset position along the direction
+                    if (i > 0 && i < sectionsNeeded - 1)
+                    {
+                        // Add a tiny bit of overlap between sections
+                        position -= direction * (beamSectionDistance * sectionOverlap * 0.5f);
+                    }
+                    
                     // Apply position and rotation
                     section.transform.position = position;
                     section.transform.rotation = rotation;
+                    
+                    // Store this position for next section's alignment
+                    prevPosition = position;
                 }
             }
         }
@@ -410,52 +478,42 @@ namespace Weapons
                 sectionOverlap != _lastSectionOverlap)
             {
                 // Values have changed, update the visuals
-                if (beamMiddleInstances.Count > 0)
+                if (beamMiddleInstances.Count > 0 && beamMiddleInstances[0] != null && beamMiddleInstances[0].activeSelf)
                 {
-                    // Update beam width for any line renderers
-                    LineRenderer[] lineRenderers = GetComponentsInChildren<LineRenderer>(true);
-                    foreach (LineRenderer lr in lineRenderers)
-                    {
-                        lr.startWidth = beamWidth;
-                        lr.endWidth = beamWidth * 0.7f;
-                    }
+                    // Get the active beam start and end positions
+                    Vector3 startPos = beamMiddleInstances[0].transform.position;
+                    Vector3 endPos = startPos;
                     
-                    // Update sprite scale for beam sections
-                    foreach (GameObject section in beamMiddleInstances)
+                    // Find the last active section
+                    for (int i = beamMiddleInstances.Count - 1; i >= 0; i--)
                     {
-                        if (section != null && section.activeSelf)
+                        if (beamMiddleInstances[i] != null && beamMiddleInstances[i].activeSelf)
                         {
-                            // Adjust width scale of beam sections
-                            Vector3 scale = section.transform.localScale;
-                            scale.y = beamWidth * 5f; // Multiply by a factor to make it visible
-                            section.transform.localScale = scale;
+                            endPos = beamMiddleInstances[i].transform.position;
+                            break;
                         }
                     }
                     
-                    // If section distance or overlap changed, reapply the beam layout
-                    if (_lastSectionDistance != beamSectionDistance || _lastSectionOverlap != sectionOverlap)
+                    // Calculate direction
+                    Vector3 direction = endPos - startPos;
+                    
+                    // Only update if we have a valid direction
+                    if (direction.magnitude > 0.1f)
                     {
-                        // Find any active beam
-                        if (beamMiddleInstances.Count > 0 && beamMiddleInstances[0].activeSelf)
-                        {
-                            // Get the current start and end positions
-                            Vector3 startPos = beamMiddleInstances[0].transform.position;
-                            Vector3 endPos = startPos;
-                            
-                            // Find the last active section
-                            for (int i = beamMiddleInstances.Count - 1; i >= 0; i--)
-                            {
-                                if (beamMiddleInstances[i].activeSelf)
-                                {
-                                    endPos = beamMiddleInstances[i].transform.position;
-                                    break;
-                                }
-                            }
-                            
-                            // Reapply the beam layout
-                            UpdateBeamMiddleAnimation(startPos, endPos);
-                        }
+                        // Recalculate end position based on beam length
+                        endPos = startPos + direction.normalized * direction.magnitude;
+                        
+                        // Reapply the beam layout with new settings
+                        UpdateBeamMiddleAnimation(startPos, endPos);
                     }
+                }
+                
+                // Update line renderers for consistent width
+                LineRenderer[] lineRenderers = GetComponentsInChildren<LineRenderer>(true);
+                foreach (LineRenderer lr in lineRenderers)
+                {
+                    lr.startWidth = beamWidth;
+                    lr.endWidth = beamWidth * 0.7f;
                 }
                 
                 // Store current values

@@ -384,11 +384,13 @@ namespace Weapons.Editor
             EditorGUILayout.PropertyField(sectionOverlapProp, new GUIContent("Section Overlap"));
             if (EditorGUI.EndChangeCheck() && Application.isPlaying)
             {
-                // Apply immediately in play mode for real-time feedback
                 serializedObject.ApplyModifiedProperties();
                 
-                // If in play mode, directly update the beam width
-                beamWeapon.UpdateBeamWidth(beamWidthProp.floatValue);
+                // If the beam is currently active, force an update
+                if (beamWeapon.IsFiring)
+                {
+                    beamWeapon.RefreshBeamPhysics();
+                }
             }
             
             EditorGUILayout.HelpBox("These prefabs will be used by the beam's visual effects system. The beam middle prefab is particularly important as it forms the visible beam.", MessageType.Info);
@@ -421,7 +423,76 @@ namespace Weapons.Editor
                 }
             }
             
+            EditorGUILayout.Space(10);
+            EditorGUILayout.LabelField("Beam Position Adjustment", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
+
+            SerializedProperty beamHeightOffsetProp = configProperty.FindPropertyRelative("beamHeightOffset");
+            SerializedProperty beamForwardOffsetProp = configProperty.FindPropertyRelative("beamForwardOffset");
+            SerializedProperty showPositionGUIProp = configProperty.FindPropertyRelative("showPositionAdjustmentGUI");
+
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(beamHeightOffsetProp, new GUIContent("Beam Height Offset"));
+            EditorGUILayout.PropertyField(beamForwardOffsetProp, new GUIContent("Beam Forward Offset"));
+            EditorGUILayout.PropertyField(showPositionGUIProp, new GUIContent("Show Position Adjustment GUI"));
+
+            if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+            {
+                serializedObject.ApplyModifiedProperties();
+                
+                // If the beam is currently active, force an update
+                if (beamWeapon.IsFiring)
+                {
+                    beamWeapon.RefreshBeamPhysics();
+                }
+            }
+
             EditorGUI.indentLevel--;
+
+            // Add test buttons for adjusting position in the editor
+            if (Application.isPlaying)
+            {
+                EditorGUILayout.Space(5);
+                EditorGUILayout.LabelField("Height Adjustment", EditorStyles.boldLabel);
+                EditorGUILayout.BeginHorizontal();
+                
+                if (GUILayout.Button("Raise Beam"))
+                {
+                    beamWeapon.config.beamHeightOffset += 0.1f;
+                    beamWeapon.config.beamHeightOffset = Mathf.Clamp(beamWeapon.config.beamHeightOffset, -1f, 1f);
+                    beamWeapon.RefreshBeamPhysics();
+                }
+                
+                if (GUILayout.Button("Lower Beam"))
+                {
+                    beamWeapon.config.beamHeightOffset -= 0.1f;
+                    beamWeapon.config.beamHeightOffset = Mathf.Clamp(beamWeapon.config.beamHeightOffset, -1f, 1f);
+                    beamWeapon.RefreshBeamPhysics();
+                }
+                
+                EditorGUILayout.EndHorizontal();
+                
+                // Add forward/back adjustment buttons
+                EditorGUILayout.Space(2);
+                EditorGUILayout.LabelField("Forward Adjustment", EditorStyles.boldLabel);
+                EditorGUILayout.BeginHorizontal();
+                
+                if (GUILayout.Button("Move Forward"))
+                {
+                    beamWeapon.config.beamForwardOffset += 0.1f;
+                    beamWeapon.config.beamForwardOffset = Mathf.Clamp(beamWeapon.config.beamForwardOffset, -1f, 1f);
+                    beamWeapon.RefreshBeamPhysics();
+                }
+                
+                if (GUILayout.Button("Move Back"))
+                {
+                    beamWeapon.config.beamForwardOffset -= 0.1f;
+                    beamWeapon.config.beamForwardOffset = Mathf.Clamp(beamWeapon.config.beamForwardOffset, -1f, 1f);
+                    beamWeapon.RefreshBeamPhysics();
+                }
+                
+                EditorGUILayout.EndHorizontal();
+            }
             
             // Now draw all remaining properties except excluded ones
             DrawPropertiesExcluding(serializedObject, excludedProperties.ToArray());

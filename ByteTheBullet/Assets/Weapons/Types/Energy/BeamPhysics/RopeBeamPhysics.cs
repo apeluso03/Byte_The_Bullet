@@ -111,6 +111,13 @@ namespace Weapons.BeamPhysics
         
         public void UpdateBeam(Vector3 startPos, Vector3 endPos, Vector3 fireDirection)
         {
+            // Apply height offset and forward offset to start position
+            Vector3 heightOffset = Vector3.up * config.beamHeightOffset;
+            Vector3 forwardOffset = fireDirection * config.beamForwardOffset;
+            
+            startPos += heightOffset + forwardOffset;
+            endPos += heightOffset;
+            
             if (ropePoints.Count < 2) return;
             
             float dt = Time.deltaTime;

@@ -226,5 +226,42 @@ namespace Weapons
         [Tooltip("How much sections should overlap (0-1). Higher values close gaps between sections.")]
         [Range(0f, 0.9f)]
         public float sectionOverlap = 0.3f;
+
+        [Header("Water Hose Effect")]
+        [Tooltip("How much the beam oscillates when moving (higher = more wobble)")]
+        [Range(0.1f, 2.0f)]
+        public float hoseWobbleIntensity = 0.5f;
+
+        [Tooltip("How quickly the beam oscillates (higher = faster wobble)")]
+        [Range(0.5f, 5.0f)]
+        public float hoseWobbleSpeed = 2.0f;
+
+        [Tooltip("How much the beam lags behind aim changes (higher = more lag)")]
+        [Range(0.1f, 3.0f)]
+        public float hoseLagIntensity = 1.0f;
+
+        [Tooltip("How much gravity affects the beam (higher = more sag)")]
+        [Range(0f, 1.0f)]
+        public float hoseGravityEffect = 0.2f;
+
+        [Header("Beam Stability")]
+        [Tooltip("Portion of beam near the weapon that remains stiff (0-0.5)")]
+        [Range(0f, 0.5f)]
+        public float stiffPortionLength = 0.15f;
+
+        [Header("Beam Position Adjustment")]
+        [Tooltip("Vertical offset to raise/lower the beam (positive = higher)")]
+        [Range(-1f, 1f)]
+        public float beamHeightOffset = 0f;
+
+        [Tooltip("Horizontal offset to shift the beam's starting point (positive = forward)")]
+        [Range(-1f, 1f)]
+        public float beamForwardOffset = 0f;
+
+        [Tooltip("Show GUI sliders to adjust beam position in play mode")]
+        public bool showPositionAdjustmentGUI = true;
+
+        [Tooltip("Show GUI slider to adjust beam height in play mode")]
+        public bool showHeightAdjustmentGUI = true;
     }
 }
