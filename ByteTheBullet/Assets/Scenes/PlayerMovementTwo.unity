@@ -766,52 +766,14 @@ GameObject:
   - component: {fileID: 1563989661}
   - component: {fileID: 1563989660}
   - component: {fileID: 1563989659}
-  - component: {fileID: 1563989658}
   - component: {fileID: 1563989657}
-  - component: {fileID: 1563989656}
-  - component: {fileID: 1563989655}
   m_Layer: 0
-  m_Name: New Shotgun
+  m_Name: Freeze Ray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1563989655
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563989654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb6975a0f816b4642af05ff30cfb2136, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentEnergy: 0
-  reloadSound: {fileID: 0}
-  reloadTime: 1.5
---- !u!114 &1563989656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563989654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cd03021e4c617049b22ab8056981c9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chargeFXPrefab: {fileID: 1798269927}
-  flareFXPrefab: {fileID: 0}
-  impactFXPrefab: {fileID: 2075211933}
-  beamMiddleAnimPrefab: {fileID: 1487884056}
-  beamWidth: 0.2
-  beamSectionDistance: 1
-  sectionOverlap: 0.3
-  debugBeamSections: 0
 --- !u!114 &1563989657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -839,10 +801,10 @@ MonoBehaviour:
   onAmmoChanged:
     m_PersistentCalls:
       m_Calls: []
-  weaponName: Standard Weapon
+  weaponName: Freeze Ray
   weaponType: Standard
-  rarity: Common
-  description: 
+  rarity: Unique
+  description: Freeze Ray
   damage: 30
   damageType: Physical
   currentAmmo: 0
@@ -871,11 +833,22 @@ MonoBehaviour:
   shakeIntensity: 0.2
   shakeDuration: 0.1
   config:
+    fireMode: 0
+    continuousChargeTime: 0.5
+    maxChargeTime: 0.64
+    maxChargeDamageMultiplier: 2.5
+    burstDuration: 0.5
     maxEnergy: 100
-    energyRegenRate: 15
     energyDrainRate: 20
+    energySystemType: 0
+    energyRegenRate: 15
+    maxBatteryCount: 5
+    currentBatteryCount: 3
+    energyPerBattery: 50
+    batteryReloadTime: 2
+    autoReloadWhenDepleted: 1
     beamRange: 20
-    beamWidth: 0.2
+    beamWidth: 0.3
     beamColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
     beamDamagePerSecond: 30
     useChargeEffect: 1
@@ -906,31 +879,23 @@ MonoBehaviour:
     beamDrag: 0.8
     beamTipMass: 2.5
     beamStiffness: 1
+    chargeFXPrefab: {fileID: 1798269927}
+    flareFXPrefab: {fileID: 0}
+    impactFXPrefab: {fileID: 2075211933}
+    beamMiddleAnimPrefab: {fileID: 1487884056}
+    beamSectionDistance: 1
+    sectionOverlap: 0.4
+    hoseWobbleIntensity: 0.5
+    hoseWobbleSpeed: 2
+    hoseLagIntensity: 1
+    hoseGravityEffect: 0.2
+    stiffPortionLength: 0.15
+    beamHeightOffset: 0.015
+    beamForwardOffset: 0.6
+    showPositionAdjustmentGUI: 0
+    showHeightAdjustmentGUI: 1
   beamFX: {fileID: 0}
   currentEnergy: 100
---- !u!114 &1563989658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563989654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 117a277738d00c34086bccb1c1f9b3b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponName: New Shotgun
-  weaponType: Beam
-  rarity: Common
-  fireType: Beam
-  damageType: Energy
-  damage: 30
-  fireRate: 15
-  magazineSize: 100
-  reloadTime: 1.5
-  accuracy: 0.8
-  description: A powerful shotgun with a wide spread.
 --- !u!114 &1563989659
 MonoBehaviour:
   m_ObjectHideFlags: 0
