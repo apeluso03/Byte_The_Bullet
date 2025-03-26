@@ -47,18 +47,8 @@ namespace Weapons
         
         public void RegenerateEnergy(bool isFiring)
         {
-            // Only regenerate when not firing and not recharging and not at max energy
-            if (!isFiring && !isRecharging && CurrentEnergy < config.maxEnergy)
-            {
-                CurrentEnergy += config.energyRegenRate * Time.deltaTime;
-                
-                // Trigger ammo changed event (for UI updates)
-                if (onAmmoChanged != null)
-                {
-                    int currentEnergyInt = Mathf.FloorToInt(CurrentEnergy);
-                    onAmmoChanged.Invoke(currentEnergyInt, Mathf.FloorToInt(config.maxEnergy));
-                }
-            }
+            // This method should be empty or simplified, as we're handling regeneration directly in BeamWeapon.Update
+            // We'll keep this method for backward compatibility
         }
         
         public void ConsumeEnergy(float deltaTime)
@@ -115,6 +105,13 @@ namespace Weapons
             CurrentEnergy = config.maxEnergy;
             isRecharging = false;
             onReloadComplete?.Invoke();
+        }
+
+        public void UpdateEnergyUI()
+        {
+            // Call the ammo changed event to update the UI
+            onAmmoChanged?.Invoke(Mathf.RoundToInt(beamWeapon.CurrentEnergy), 
+                                 Mathf.RoundToInt(beamWeapon.config.maxEnergy));
         }
     }
 }

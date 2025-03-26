@@ -8,6 +8,7 @@ namespace Weapons.Editor
     public class BeamWeaponEditor : UnityEditor.Editor
     {
         private bool showFreezeRaySettings = true;
+        private bool showEnergySettings = true;
         
         // List of property names to exclude from inspector
         private readonly List<string> excludedProperties = new List<string>
@@ -23,7 +24,12 @@ namespace Weapons.Editor
             "rarity",       // in our custom inspector section
             "description",
             "damage",       // Also handle damage property manually
-            "m_Script"      // Hide the script reference at the top
+            "m_Script",     // Hide the script reference at the top
+            "currentEnergy", // We'll handle energy in our custom energy section
+            "magazineSize",
+            "currentAmmo",
+            "reserveAmmo",
+            "maxReserveAmmo"
         };
         
         // SerializedProperty for the weapon name
@@ -32,6 +38,8 @@ namespace Weapons.Editor
         private SerializedProperty descriptionProperty;
         private SerializedProperty damageProperty;
         private SerializedProperty scriptProperty;
+        private SerializedProperty currentEnergyProperty;
+        private SerializedProperty configProperty;
         
         // Colors for different rarities
         private readonly Color[] rarityColors = new Color[] {
@@ -55,6 +63,8 @@ namespace Weapons.Editor
             rarityProperty = serializedObject.FindProperty("rarity");
             descriptionProperty = serializedObject.FindProperty("description");
             damageProperty = serializedObject.FindProperty("damage");
+            currentEnergyProperty = serializedObject.FindProperty("currentEnergy");
+            configProperty = serializedObject.FindProperty("config");
         }
         
         public override void OnInspectorGUI()
@@ -138,6 +148,52 @@ namespace Weapons.Editor
             
             EditorGUI.indentLevel--;
             
+            // Energy settings
+            EditorGUILayout.Space(10);
+            showEnergySettings = EditorGUILayout.Foldout(showEnergySettings, "Energy Settings", true, EditorStyles.foldoutHeader);
+            
+            if (showEnergySettings)
+            {
+                EditorGUI.indentLevel++;
+                
+                // Current energy display
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.PrefixLabel("Current Energy");
+                
+                float maxEnergy = beamWeapon.config.maxEnergy;
+                float currentEnergy = beamWeapon.CurrentEnergy;
+                
+                // Progress bar for energy
+                Rect progressRect = EditorGUILayout.GetControlRect();
+                EditorGUI.ProgressBar(progressRect, currentEnergy / maxEnergy, $"{currentEnergy:F0} / {maxEnergy:F0}");
+                
+                EditorGUILayout.EndHorizontal();
+                
+                // Energy config settings
+                // Max energy setting
+                SerializedProperty maxEnergyProp = configProperty.FindPropertyRelative("maxEnergy");
+                EditorGUILayout.PropertyField(maxEnergyProp, new GUIContent("Max Energy"));
+                
+                // Energy regen rate
+                SerializedProperty regenRateProp = configProperty.FindPropertyRelative("energyRegenRate");
+                EditorGUILayout.PropertyField(regenRateProp, new GUIContent("Energy Regen Rate"));
+                
+                // Energy drain rate
+                SerializedProperty drainRateProp = configProperty.FindPropertyRelative("energyDrainRate");
+                EditorGUILayout.PropertyField(drainRateProp, new GUIContent("Energy Drain Rate"));
+                
+                // Add a fill energy button in play mode
+                if (Application.isPlaying)
+                {
+                    if (GUILayout.Button("Fill Energy"))
+                    {
+                        beamWeapon.CurrentEnergy = beamWeapon.config.maxEnergy;
+                    }
+                }
+                
+                EditorGUI.indentLevel--;
+            }
+            
             // Damage section below Weapon Info
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Damage Settings", EditorStyles.boldLabel);
@@ -145,6 +201,10 @@ namespace Weapons.Editor
             
             // Draw damage property
             EditorGUILayout.PropertyField(damageProperty);
+            
+            // Beam damage per second
+            SerializedProperty beamDamagePerSecondProp = configProperty.FindPropertyRelative("beamDamagePerSecond");
+            EditorGUILayout.PropertyField(beamDamagePerSecondProp, new GUIContent("Beam DPS"));
             
             EditorGUI.indentLevel--;
             
@@ -208,7 +268,6 @@ namespace Weapons.Editor
                 
                 EditorGUILayout.LabelField("Visual Quality:", EditorStyles.boldLabel);
                 
-                SerializedProperty configProperty = serializedObject.FindProperty("config");
                 EditorGUILayout.PropertyField(configProperty.FindPropertyRelative("beamSegments"));
                 EditorGUILayout.HelpBox("Higher values create a smoother curve but may impact performance.", MessageType.None);
                 
@@ -234,6 +293,10 @@ namespace Weapons.Editor
                 EditorGUILayout.Space(10);
                 EditorGUILayout.LabelField("Test Controls (Play Mode Only)", EditorStyles.boldLabel);
                 
+                // Add energy regeneration rate display
+                EditorGUILayout.LabelField($"Energy Regeneration Rate: {beamWeapon.config.energyRegenRate}/sec");
+                EditorGUILayout.LabelField($"Energy Drain Rate: {beamWeapon.config.energyDrainRate}/sec");
+                
                 if (GUILayout.Button(beamWeapon.IsFiring ? "Stop Beam" : "Start Beam"))
                 {
                     if (beamWeapon.IsFiring)
@@ -244,6 +307,23 @@ namespace Weapons.Editor
                     {
                         beamWeapon.StartBeam();
                     }
+                }
+                
+                // Add buttons for energy testing
+                if (GUILayout.Button("Fill Energy"))
+                {
+                    beamWeapon.CurrentEnergy = beamWeapon.config.maxEnergy;
+                }
+                
+                if (GUILayout.Button("Deplete Energy"))
+                {
+                    beamWeapon.CurrentEnergy = 0;
+                }
+                
+                // Add a manual regeneration button
+                if (GUILayout.Button("Regenerate Energy (+25%)"))
+                {
+                    beamWeapon.CurrentEnergy += beamWeapon.config.maxEnergy * 0.25f;
                 }
                 
                 if (beamWeapon.IsFiring)

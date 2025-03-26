@@ -87,7 +87,18 @@ namespace Weapons
         protected override void Update()
         {
             HandleInput();
-            energyManager.RegenerateEnergy(isFiringBeam);
+            
+            // Update energy regeneration - make sure it only regenerates when NOT firing
+            if (!isFiringBeam && !isReloading)
+            {
+                CurrentEnergy += config.energyRegenRate * Time.deltaTime;
+                
+                // Notify the UI about energy changes
+                if (energyManager != null)
+                {
+                    energyManager.UpdateEnergyUI();
+                }
+            }
             
             if (isFiringBeam)
             {
@@ -207,13 +218,14 @@ namespace Weapons
         
         private void UpdateBeam()
         {
-            // Energy consumption
-            energyManager.ConsumeEnergy(Time.deltaTime);
+            // Force energy consumption - this line is crucial
+            CurrentEnergy -= config.energyDrainRate * Time.deltaTime;
             
-            // If energy is depleted, stop the beam
+            // Check if energy is depleted
             if (CurrentEnergy <= 0)
             {
                 StopBeam();
+                onOutOfAmmo?.Invoke();
                 return;
             }
             
