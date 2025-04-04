@@ -1,86 +1,80 @@
-\# Byte the Bullet
+# Byte the Bullet
 
-\#\# Elevator Pitch
+## Elevator Pitch
 
 Byte the Bullet is a rogue-like dungeon crawler that combines fast-paced combat with hands-on coding challenges. Players fight through glitched-out levels, debug broken code, and solve algorithmic puzzles to repair the world and defeat corrupted bosses and enemies.
 
-\#\# Influences (Brief)
+## Influences
 
-\- \*Influence \#1\*:  
-  \- Enter The Gungeon  
-  \- Explanation: This game is one of the definitive top down shooter \+ dungeon crawler games, and the gameplay of Byte the Bullet will be similar in the sense that it is a top down shooter \+ dungeon crawler.  
-\- \*Influence \#2\*:  
-  \- LeetCode  
-  \- Explanation: The hands-on coding challenges in the game are similar to the coding challenges from the website LeetCode.
+- *Influence #1*:  
+  - Enter The Gungeon  
+  - Explanation: This game is one of the definitive top down shooter \+ dungeon crawler games, and the gameplay of Byte the Bullet will be similar in the sense that it is a top down shooter \+ dungeon crawler.  
+- *Influence #2*:  
+  - LeetCode  
+  - Explanation: The hands-on coding challenges in the game are similar to the coding challenges from the website LeetCode.
 
-\#\# Core Gameplay Mechanics (Brief)
+## Core Gameplay Mechanics
 
-\*Give a very high-level description of any core gameplay mechanics\*
+- Top-down combat - The player will view their character from a top-down camera angle and will need to shoot enemies and dodge bullets in order to survive.  
+- Debugging Glitched Rooms - some of the rooms you encounter will feature glitched code that the player will have to debug to enter.  
+- Leetcode chests - There will be chests in the game with powerful items inside, but they may only be opened after solving a coding problem.  
+- Stack-based inventory - Players will be able to store items in their inventory.  
+- Algorithm-based weapons - The weapons in the game will be based on different algorithms in coding. They can be upgraded by answering questions related to the sorting algorithm  
+- Difficulty Selection - There will be different difficulties selectable that will make the coding challenges easier or more difficult.
 
-\- Top-down combat \- The player will view their character from a top-down camera angle and will need to shoot enemies and dodge bullets in order to survive.  
-\- Debugging Glitched Rooms \- some of the rooms you encounter will feature glitched code that the player will have to debug to enter.  
-\- Leetcode chests \- There will be chests in the game with powerful items inside, but they may only be opened after solving a coding problem.  
-\- Stack-based inventory \- Players will be able to store items in their inventory.  
-\- Algorithm-based weapons \- The weapons in the game will be based on different algorithms in coding. They can be upgraded by answering questions related to the sorting algorithm  
-\- Difficulty Selection \- There will be different difficulties selectable that will make the coding challenges easier or more difficult.
+# Learning Aspects
 
-\# Learning Aspects
-
-\#\# Learning Domains
+## Learning Domains
 
 Debugging code and solving coding problems at different levels.
 
-\#\# Target Audiences
+## Target Audiences
 
-\- Beginner coders who want to enhance their coding and debugging skills  
-\- Experienced coders who want to strengthen their coding and debugging ability.
+- Beginner coders who want to enhance their coding and debugging skills  
+- Experienced coders who want to strengthen their coding and debugging ability.
 
-\#\# Target Contexts
+## Target Contexts
 
 This would be used as a for-fun activity for students who want to get better at coding on their own time. Due to its use of weapons, it would be limited to high school students and above.
 
-\#\# Learning Objectives
+## Learning Objectives
 
-\- By playing this game, players will be able to identify and fix syntax errors in code snippets, and develop problem-solving and debugging skills.  
-\- By playing this game, players will be able to solve simple algorithmic problems.  
-\- By playing this game, players will be able to use data structure concepts more effectively when coding.
+- By playing this game, players will be able to identify and fix syntax errors in code snippets, and develop problem-solving and debugging skills.  
+- By playing this game, players will be able to solve simple algorithmic problems.  
+- By playing this game, players will be able to use data structure concepts more effectively when coding.
 
-\#\# Prerequisite Knowledge
+## Prerequisite Knowledge
 
-\*What do they need to know prior to trying this game?\*
+- Prior to the game, players need to know basic Python programming rules  
+- Prior to the game, players need to have knowledge of sorting algorithms
 
-\- Prior to the game, players need to know basic Python programming rules  
-\- Prior to the game, players need to have knowledge of sorting algorithms
-
-\#\# Assessment Measures
+## Assessment Measures
 
 Learning will be assessed by how far the player manages to get. Since basic enemies typically won’t determine learning, points and levels will progress through the coding problem rooms.
 
-\# What sets this project apart?
+# What sets this project apart?
 
-\- Similarity to other games students have played  
-\- Focus on fun combat rather than straight up quiz questions  
-\- Allows the player to get stronger by answering questions  
-\- Most debugging and coding assignments are monotonous and boring, by tying them to an action packed scenario the player will be more inclined to want to learn.
+- Similarity to other games students have played  
+- Focus on fun combat rather than straight up quiz questions  
+- Allows the player to get stronger by answering questions  
+- Most debugging and coding assignments are monotonous and boring, by tying them to an action packed scenario the player will be more inclined to want to learn.
 
-\# Player Interaction Patterns and Modes
+# Player Interaction Patterns and Modes
 
-\#\# Player Interaction Pattern
+## Player Interaction Pattern
 
 This is a game for one person, they move with the keyboard and aim and shoot with the mouse. The keyboard will also be used to answer some questions and fix code.
 
-\#\# Player Modes
+## Player Modes
 
-\- Single-player: The player advances through the dungeon until they either perish or reach the end.
+- Single-player: The player advances through the dungeon until they either perish or reach the end.
 
-\# Gameplay Objectives
+# Gameplay Objectives
 
-\- Escape: The player’s main goal is to escape the dungeon by advancing through rooms and defeating enemies. Doors and other obstacles will be able to be unlocked by solving coding challenges.  
-\- Upgrade: The player can open chests to upgrade their guns and HP to become stronger and fight increasingly difficult enemies. Chests that house these upgrades can be opened by solving a coding challenge.
+- Escape: The player’s main goal is to escape the dungeon by advancing through rooms and defeating enemies. Doors and other obstacles will be able to be unlocked by solving coding challenges.  
+- Upgrade: The player can open chests to upgrade their guns and HP to become stronger and fight increasingly difficult enemies. Chests that house these upgrades can be opened by solving a coding challenge.
 
-\# Procedures/Actions
-
-\*Describe the control scheme and what actions a user can take in the game.\*
+# Procedures/Actions
 
 - Dodge Roll (space bar)  
 - 8 directional movement (W,A,S,D)  
@@ -90,26 +84,26 @@ This is a game for one person, they move with the keyboard and aim and shoot wit
 - Reload(R)  
 - Coding (keyboard)
 
-\# Rules
+# Rules
 
 The player will have weapons that resemble coding techniques, i.e. bubble sort, loops, etc. Some will have finite ammo resources that the player will have to keep track of. Puzzles will be solved with the items/weapons that you find as well as with traditional coding on the player’s keyboard. The player will “win” when they complete all of the coding puzzles correctly in the dungeon.
 
-\# Objects/Entities
+# Objects/Entities
 
-\- Enemies  
-\- Weapons  
-\- Passive Items  
-\- Dungeon Rooms  
-\- Chests
+- Enemies  
+- Weapons  
+- Passive Items  
+- Dungeon Rooms  
+- Chests
 
-\#\# Core Gameplay Mechanics (Detailed)
+## Core Gameplay Mechanics
 
-\- Player Movement\*: The player can move in 8 directions using WASD to move around the dungeon and evade enemies. They are also equipped with a dodge roll which will help with extra evasive maneuvers when things are dire.  
-\- Combat: The player will be equipped with a weapon to fight monsters that they will encounter in the dungeon. These weapons will be based on sorting algorithms and will be varying in power. They will have a limited ammo supply, so players will need to reload them if all of their ammo is expunged. The enemies that you fight in combat will also vary in power, some will be stronger than others. If a player loses all of their hit points in combat, the game will end and they must restart.  
-\- Coding Challenges: The main learning aspect of the game will be through in-game Coding Challenges. The player will need to answer a coding question in order to progress to a new area or unlock a chest. The questions will be varying in difficulty depending on how useful the result of answering the question will be to the player. These questions will either have the player enter a virtual codespace and fix code or answer a multiple choice question.
+- Player Movement*: The player can move in 8 directions using WASD to move around the dungeon and evade enemies. They are also equipped with a dodge roll which will help with extra evasive maneuvers when things are dire.  
+- Combat: The player will be equipped with a weapon to fight monsters that they will encounter in the dungeon. These weapons will be based on sorting algorithms and will be varying in power. They will have a limited ammo supply, so players will need to reload them if all of their ammo is expunged. The enemies that you fight in combat will also vary in power, some will be stronger than others. If a player loses all of their hit points in combat, the game will end and they must restart.  
+- Coding Challenges: The main learning aspect of the game will be through in-game Coding Challenges. The player will need to answer a coding question in order to progress to a new area or unlock a chest. The questions will be varying in difficulty depending on how useful the result of answering the question will be to the player. These questions will either have the player enter a virtual codespace and fix code or answer a multiple choice question.
 
       
-\#\# Feedback
+## Feedback
 
 Hitting enemies and getting hit will play a sound effect that tells you when you are dealing and taking damage. A sound effect will also play when the player runs out of ammo and tries to shoot, indicating that they must reload.
 
@@ -117,52 +111,52 @@ The in-game UI will have the player health bar and ammo count visible to the pla
 
 There will be a map available to the player that will tell them where they have gone and where they need to go in the dungeon to discourage the player from feeling stuck or lost.
 
-\# Story and Gameplay
+# Story and Gameplay
 
-\#\# Presentation of Rules
+## Presentation of Rules
 
 Upon first launch, there will be a short tutorial that showcases the game’s mechanics to the player, almost like a crash course.
 
-\#\# Presentation of Content
+## Presentation of Content
 
 This will also be covered in the crash course from the presentation of rules.
 
-\#\# Story (Brief)
+## Story
 
 You are a computer man trapped inside a server filled with malware and bugs and you must defeat enemies and write code to traverse through the dungeon and escape back to your home network.
 
-\#\# Storyboarding
+## Storyboarding
 
 ![][image1]![][image2]  
 Fig 1 \- Fighting enemies in a room   Fig 2 \- Answering a question to open a chest
 
-\# Assets Needed
+# Assets Needed
 
-\#\# Aesthetics
+## Aesthetics
 
 The aesthetics of the game should be sort of blocky and pixelated, almost emulating the feeling of being trapped in a computer.
 
-\#\# Graphical
+## Graphical
 
-\- Characters List  
-  \- Computer Man/Main Character  
-\- Textures:  
-  \- Enemies and weapons  
-\- Environment Art/Textures:  
-  \- Dungeon built to look like old technology  
-  \- Old school terminal for coding problems
+- Characters List  
+  - Computer Man/Main Character  
+- Textures:  
+  - Enemies and weapons  
+- Environment Art/Textures:  
+  - Dungeon built to look like old technology  
+  - Old school terminal for coding problems
 
-\#\# Audio
+## Audio
 
-\- Music List (Ambient sound)  
-  \- Making way through dungeon: Pixel-ish, ambient/hardcore music similar to which is in the background during enter the gungeon [https://www.youtube.com/watch?v=IEsSICRjPdM](https://www.youtube.com/watch?v=IEsSICRjPdM)  
-  \- solving a coding challenge: fully ambient music similar to that of a Zero Escape puzzle room [https://www.youtube.com/watch?v=hzQ3jse4ars\&list=PLMSfQ5tA\_UpjE15aIpDYkcZPshx-0DwzG\&index=15](https://www.youtube.com/watch?v=hzQ3jse4ars&list=PLMSfQ5tA_UpjE15aIpDYkcZPshx-0DwzG&index=15)
+- Music List (Ambient sound)  
+  - Making way through dungeon: Pixel-ish, ambient/hardcore music similar to which is in the background during enter the gungeon [https://www.youtube.com/watch?v=IEsSICRjPdM](https://www.youtube.com/watch?v=IEsSICRjPdM)  
+  - solving a coding challenge: fully ambient music similar to that of a Zero Escape puzzle room [https://www.youtube.com/watch?v=hzQ3jse4ars\&list=PLMSfQ5tA\_UpjE15aIpDYkcZPshx-0DwzG\&index=15](https://www.youtube.com/watch?v=hzQ3jse4ars&list=PLMSfQ5tA_UpjE15aIpDYkcZPshx-0DwzG&index=15)
 
-\- Sound List (SFX)  
-  \- Shooting gun: Gunshot noise for each type of weapon  
-  \- Taking damage (both player and on enemy death): Computer character will make a sort of short circuiting noise and the enemies will make an evaporating noise on death  
-  \- Opening chest: This will make a noise like a lock unlocking.  
-  \- Solving coding challenge: This will make a fanfare noise similar to the Legend of Zelda, but much more lowkey.
+- Sound List (SFX)  
+  - Shooting gun: Gunshot noise for each type of weapon  
+  - Taking damage (both player and on enemy death): Computer character will make a sort of short circuiting noise and the enemies will make an evaporating noise on death  
+  - Opening chest: This will make a noise like a lock unlocking.  
+  - Solving coding challenge: This will make a fanfare noise similar to the Legend of Zelda, but much more lowkey.
 
 [image1]: <data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPUAAADlCAIAAAAEBSapAAAFGElEQVR4Xu3UQXLjOBBFwb7/pWcimm6ILlCQbEs08ZG5mBgB8IJVL/rPf5DrTz2AIPommb5Jpm+S3fr+Ayn0TbK7fbefMCN9k0zfJNM3yfRNMn2TTN8k0zfJ9E0yfZNM3yTTN8n0TTJ9k0zfJNM3yfRNMn2TTN8k0zfJ9E0yfZNM3yTTN8n0TTJ9k0zfJNM3yfRNMn2TTN8k0zfJ9E0yfZNM3yTTN8n0TTJ9k0zfJNM3yfRNMn2TTN8k0zfJ9E0yfZNM3yTTN8n0/RSjmJS+n2IUk1q67+0bx9qz+sfMoOxurb73tu9tBodMpCxu6b63//Zfvb/qb7mysjJ9168e/+Ti9P2hfWydiL5nVrd57yLeYdP9EJaaSQB9fyh9N/ur1WYSoKys7rj9jPdMyv0JF6fvD9v3fppF1/pSA8lQd3rvYhHbV/faVf0Drq1sbfW+m+3zi/qIyyuL0/fN4p+fQd/HFv/8GPo+sH37yhOIUZa4dN+3qD+r75hH2eC6fd9y/vvV5SeTKhtcuu/yc29/xUTK+tbte+/W9b9/y+sLJlEyXr3vfdb7n+2EuZTd6bt+9fazP2cKZXGr990zhKnp+wFDmJq+HzCEqembZPommb5Jpm+S6TuHffX0PbdtTb36blVlGvqeSb+j7aQ5fLOU8vn6nsnhgtrhtsHF91g+X98z+bS5z/rD9nIp5dvrvNpPrqxu8XPf/YN11Mncu+DK6hZ3fe8PLdQ4plQ21XbXb7A/WYq+p9RvatB3f7gOfU+p39S2vv58u6pHy9D3lA43dW+Dh4eL0PeU9ss63Nr+8PDBIvQ9pbKs7ee99d07X0Gd0e6KS9vvq/W9P2z6k3Xoe2KHK+sP+zfr0Pfctq019Xr5teo7xy3zz+q7leg7h/X19B3Cv9aH9D23lnVR361K31M67Lgd9lfL0vd87hXczu89WJC+53O4pj7r8nNN+g6x7c4SC33Pbdta250lFvqe2C3tf7tr/8NG32nscU/fgeyx0TfJ9E0yfZNM3yTTN8n0TTJ9k0zfJNM3yfRNMn1fnb38hL5Jpm+S6Ztk+iaZvkmm78uxhRfS97XYwmvpm2T6Jpm+SaZvkun7Egz/TfR9CSb/Jvommb6/YBvRWP0bzlW2oO8vG0xpcMU59P1TgykNrjiHvn9qMKXBFefQ908NpjS44hz6/qnBlAZXnEPfPzWY0uCKc+j7R8ZTGlxxDn1/3zaiwaDunTeDv+UlyoT1/R3brIrtvD7lXG0XHz/vXfCMNrF/kRvgL9P3K5nY1ej7lUzsavT9SiZ2Nfr+vm1E+0H1E9u/2ZQHvFWZub4fG5TarvbqI05UVqDvB8ZjKVfb48F73q3MX98PjGfS3xrj79L3K/UT6084k75fYxtXP7H+hDPp+wVa3P3QzPB3lY3o+8vqBM3tSup27l3Q20bUT+nwkF9RdqHvZ43nM77lNPr+jofDefiAc+j7y56czJPPeCt9f9nzY3n+JW+i7zcywF+n7zcyw1+nb5Lpm2T6Jpm+SaZvkumbZPommb5Jpm+S6Ztk+iaZvkmmb5Lpm2T6Jpm+SaZvkumbZPommb5Jpm+S6Ztk+iaZvkmmb5Lpm2T6Jpm+SaZvkumbZPommb5Jpm+S6Ztk+iaZvkmmb5Lpm2T6Jpm+SaZvkumbZPommb5Jpm+S6Ztk+iaZvkmmb5Lpm2T6Jpm+SaZvkumbZPommb5Jpm+S6ZtkD/qGAPom2UHfkEffJNM3yf4Hz/vylpp0CMwAAAAASUVORK5CYII=>
 
