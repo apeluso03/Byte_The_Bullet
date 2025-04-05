@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -445,4 +446,5 @@ public class WeaponCreatorWindow : EditorWindow
         // Notify the user
         EditorUtility.DisplayDialog("Weapon Created", message, "OK");
     }
-} 
+}
+#endif 

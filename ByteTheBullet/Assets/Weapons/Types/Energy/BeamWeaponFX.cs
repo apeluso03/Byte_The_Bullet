@@ -338,8 +338,10 @@ namespace Weapons
                     Vector3 pos = beamMiddleInstances[i].transform.position;
                     Gizmos.DrawWireSphere(pos, 0.1f);
                     
-                    // Draw section number
+        #if UNITY_EDITOR
+                    // Draw section number - only in editor
                     UnityEditor.Handles.Label(pos + Vector3.up * 0.2f, i.ToString());
+        #endif
                 }
             }
         }
