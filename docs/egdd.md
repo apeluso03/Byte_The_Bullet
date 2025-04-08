@@ -127,8 +127,7 @@ You are a computer man trapped inside a server filled with malware and bugs and 
 
 ## Storyboarding
 
-![][image1]![][image2]  
-Fig 1 \- Fighting enemies in a room   Fig 2 \- Answering a question to open a chest
+https://drive.google.com/file/d/12i472qOIdkCI0ksJFP5gz3VzMc6_m4Vf/view?usp=drive_link
 
 # Assets Needed
 
