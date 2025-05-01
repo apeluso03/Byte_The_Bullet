@@ -10,9 +10,9 @@ namespace Weapons
     public class ShotgunWeapon : BaseWeapon
     {
         [Header("Pellet Settings")]
-        public int pelletCount = 8;
-        public float pelletSpeed = 10f;
-        public float spreadAngle = 30f;
+        public int pelletCount = 12;
+        public float pelletSpeed = 15f;
+        public float spreadAngle = 45f;
         public Color pelletColor = Color.yellow;
         
         public float pelletSize = 0.2f;
@@ -371,12 +371,13 @@ namespace Weapons
             // Set velocity
             rb.linearVelocity = direction * pelletSpeed;
             
-            // Add destruction script
+            // Add destruction script with range limit and shorter lifetime
             PelletBehavior behavior = pellet.GetComponent<PelletBehavior>() ?? pellet.AddComponent<PelletBehavior>();
-            behavior.lifetime = 5f;
+            behavior.lifetime = 0.5f; // Reduced from 5f to 0.5f for quicker cleanup
+            behavior.maxRange = shotgunMaxRange;
             
-            // Long lifetime to see them move across screen
-            Destroy(pellet, 10f);
+            // Remove the long Destroy call since PelletBehavior handles destruction
+            // Destroy(pellet, 10f); // Remove this line
         }
         
         // Simple circle sprite creation
@@ -737,29 +738,153 @@ namespace Weapons
                 aiming.isEquipped = true;
             }
         }
-    }
+
+        [Header("Range Settings")]
+        [SerializeField] private float shotgunMaxRange = 5f;
+        [SerializeField] private float shotgunDamageDropoffStart = 2f;
+        [SerializeField] private float shotgunMinDamageMultiplier = 0.1f;
+
+        // Properties that sync with base class values
+        private float ShotgunMaxRange
+        {
+            get { return shotgunMaxRange; }
+            set 
+            { 
+                shotgunMaxRange = Mathf.Clamp(value, 3f, 10f);
+                maxRange = shotgunMaxRange;
+            }
+        }
+
+        private float ShotgunDamageDropoffStart
+        {
+            get { return shotgunDamageDropoffStart; }
+            set 
+            { 
+                shotgunDamageDropoffStart = Mathf.Clamp(value, 1f, maxRange * 0.5f);
+                damageDropoffStart = shotgunDamageDropoffStart;
+            }
+        }
+
+        private float ShotgunMinDamageMultiplier
+        {
+            get { return shotgunMinDamageMultiplier; }
+            set 
+            { 
+                shotgunMinDamageMultiplier = Mathf.Clamp(value, 0.05f, 0.3f);
+                minDamageMultiplier = shotgunMinDamageMultiplier;
+            }
+        }
+
+        protected virtual void Start()
+        {
+            // Set very short range values
+            ShotgunMaxRange = 5f;            // Very short maximum range
+            ShotgunDamageDropoffStart = 2f;  // Start damage falloff very close
+            ShotgunMinDamageMultiplier = 0.1f; // Sharp damage falloff
+        }
+
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            
+            // Update our properties which will in turn update the base class fields
+            ShotgunMaxRange = shotgunMaxRange;
+            ShotgunDamageDropoffStart = shotgunDamageDropoffStart;
+            ShotgunMinDamageMultiplier = shotgunMinDamageMultiplier;
+        }
+    } // Close ShotgunWeapon class
     
-    // Simple pellet behavior class - simplified
+    // Update the PelletBehavior class
     public class PelletBehavior : MonoBehaviour
     {
-        public float lifetime = 5f;
+        public float lifetime = 0.5f;
+        public float maxRange = 5f;
+        private Vector3 startPosition;
+        private bool isDestroying = false; // Add flag to prevent multiple destroy calls
         
         void Start()
         {
-            // Increase lifetime so pellets stay on screen longer
+            startPosition = transform.position;
             Destroy(gameObject, lifetime);
+        }
+
+        void Update()
+        {
+            if (isDestroying) return; // Skip if already being destroyed
+            
+            float distanceTraveled = Vector3.Distance(transform.position, startPosition);
+            if (distanceTraveled >= maxRange)
+            {
+                DestroyPellet();
+            }
         }
         
         void OnTriggerEnter2D(Collider2D other)
         {
+            if (isDestroying) return; // Skip if already being destroyed
+            
             // Ignore collisions with other pellets
             if (other.gameObject.name.Contains("Pellet"))
                 return;
             
-            // Log hit without health interaction
-            Debug.Log($"Pellet hit: {other.name}");
+            DestroyPellet();
+        }
+
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (isDestroying) return; // Skip if already being destroyed
             
-            // Destroy the pellet
+            // Ignore collisions with other pellets
+            if (collision.gameObject.name.Contains("Pellet"))
+                return;
+            
+            DestroyPellet();
+        }
+
+        void DestroyPellet()
+        {
+            if (isDestroying) return; // Prevent multiple destroy calls
+            
+            isDestroying = true;
+            
+            // Immediately disable physics to prevent further collisions
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.isKinematic = true;
+            }
+            
+            // Disable collider
+            Collider2D col = GetComponent<Collider2D>();
+            if (col != null)
+            {
+                col.enabled = false;
+            }
+            
+            // Quick fade out
+            StartCoroutine(QuickFadeOut());
+        }
+
+        IEnumerator QuickFadeOut()
+        {
+            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+            if (renderer != null)
+            {
+                // Quick fade over 0.1 seconds
+                float elapsed = 0f;
+                float duration = 0.1f;
+                Color startColor = renderer.color;
+                Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+                
+                while (elapsed < duration)
+                {
+                    elapsed += Time.deltaTime;
+                    renderer.color = Color.Lerp(startColor, endColor, elapsed / duration);
+                    yield return null;
+                }
+            }
+            
             Destroy(gameObject);
         }
     }
@@ -785,4 +910,4 @@ namespace Weapons
                 ammoText.text = $"{current} / {max}";
         }
     }
-} 
+}

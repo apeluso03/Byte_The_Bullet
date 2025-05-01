@@ -367,7 +367,7 @@ namespace Weapons
             Gizmos.DrawRay(firePoint.position, firePoint.forward * 1f);
         }
         
-        private void DrawGizmoCircle(Vector3 center, float radius, int segments)
+        protected void DrawGizmoCircle(Vector3 center, float radius, int segments)
         {
             Vector3 prevPos = center + new Vector3(radius, 0, 0);
             
