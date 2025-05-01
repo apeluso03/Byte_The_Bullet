@@ -174,7 +174,7 @@ namespace Weapons
             switch (firingType)
             {
                 case FiringType.SemiAuto:
-                    if (canFire && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
+                    if (canFire && Input.GetMouseButtonDown(0))
                     {
                         FireShotgun();
                         shotgunNextFireTime = Time.time + (1f / shotgunFireRate);
@@ -182,7 +182,7 @@ namespace Weapons
                     break;
                 
                 case FiringType.Auto:
-                    if (canFire && (Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space)))
+                    if (canFire && Input.GetMouseButton(0))
                     {
                         FireShotgun();
                         shotgunNextFireTime = Time.time + (1f / shotgunFireRate);
@@ -191,15 +191,14 @@ namespace Weapons
                 
                 case FiringType.Burst:
                     // Only allow starting a burst if we're not already in one
-                    if (!isBurstFiring && canFire && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
+                    if (!isBurstFiring && canFire && Input.GetMouseButtonDown(0))
                     {
                         if (firingCoroutine != null)
                             StopCoroutine(firingCoroutine);
                         firingCoroutine = StartCoroutine(FireBurst());
                     }
                     // Continuous burst firing when button is held (also respects the "not already firing" rule)
-                    else if (continuousBurst && !isBurstFiring && canFire && 
-                            (Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space)))
+                    else if (continuousBurst && !isBurstFiring && canFire && Input.GetMouseButton(0))
                     {
                         if (firingCoroutine != null)
                             StopCoroutine(firingCoroutine);
@@ -208,7 +207,7 @@ namespace Weapons
                     break;
                 
                 case FiringType.PumpAction:
-                    if (canFire && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
+                    if (canFire && Input.GetMouseButtonDown(0))
                     {
                         FireShotgun();
                         isPumping = true;
