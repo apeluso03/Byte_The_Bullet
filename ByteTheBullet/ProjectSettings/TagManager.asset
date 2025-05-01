@@ -8,6 +8,10 @@ TagManager:
   - PlayerWeapon
   - Projectile
   - Enemy
+  - Room
+  - SpawnPoint
+  - Rooms
+  - WeaponPickup
   layers:
   - Default
   - TransparentFX

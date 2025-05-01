@@ -11,6 +11,7 @@ public class SimpleWeaponPickup : MonoBehaviour
     
     private Vector3 startPosition;
     private bool hasBeenPickedUp = false;
+    private bool isProcessingPickup = false;
     
     void Start()
     {
@@ -23,6 +24,9 @@ public class SimpleWeaponPickup : MonoBehaviour
             col = gameObject.AddComponent<BoxCollider2D>();
         }
         col.isTrigger = true;
+        
+        // Set the tag to "WeaponPickup" instead of "Player"
+        gameObject.tag = "WeaponPickup";
         
         // Use weapon prefab sprite if available
         if (weaponPrefab != null)
@@ -41,6 +45,8 @@ public class SimpleWeaponPickup : MonoBehaviour
     
     void Update()
     {
+        if (hasBeenPickedUp) return;
+        
         // Simple bobbing animation
         float yOffset = Mathf.Sin(Time.time * bobSpeed) * bobHeight;
         transform.position = startPosition + new Vector3(0, yOffset, 0);
@@ -48,14 +54,16 @@ public class SimpleWeaponPickup : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Prevent picking up multiple times
-        if (hasBeenPickedUp) return;
+        // Multiple safeguards against duplicate pickups
+        if (hasBeenPickedUp || isProcessingPickup) return;
         
         Debug.Log($"Pickup trigger entered by: {other.name}, tag: {other.tag}");
         
         // Check for player
         if (other.CompareTag("Player"))
         {
+            isProcessingPickup = true;
+            
             Debug.Log("Player tag detected");
             
             // Get the player's inventory
@@ -73,28 +81,36 @@ public class SimpleWeaponPickup : MonoBehaviour
                 WeaponAiming newWeapon = Instantiate(weaponPrefab);
                 newWeapon.name = weaponPrefab.name; // Keep the original name
                 
+                // Ensure the weapon is initially inactive
+                newWeapon.gameObject.SetActive(false);
+                
                 // Try to add to inventory
                 if (inventory.AddWeapon(newWeapon))
                 {
                     Debug.Log("Successfully added weapon to inventory!");
                     hasBeenPickedUp = true;
                     
-                    // Hide this pickup
-                    GetComponent<SpriteRenderer>().enabled = false;
-                    GetComponent<Collider2D>().enabled = false;
+                    // Immediately disable collider and renderer
+                    Collider2D col = GetComponent<Collider2D>();
+                    if (col != null) col.enabled = false;
                     
-                    // Destroy after a delay to allow logs to be seen
-                    Destroy(gameObject, 0.5f);
+                    SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+                    if (renderer != null) renderer.enabled = false;
+                    
+                    // Destroy immediately
+                    Destroy(gameObject);
                 }
                 else
                 {
                     Debug.Log("Failed to add weapon to inventory (inventory full?)");
                     Destroy(newWeapon.gameObject); // Clean up if we couldn't add it
+                    isProcessingPickup = false; // Reset processing flag if failed
                 }
             }
             else
             {
                 Debug.Log($"Missing required components. Inventory: {inventory != null}, Weapon Prefab: {weaponPrefab != null}");
+                isProcessingPickup = false; // Reset processing flag if failed
             }
         }
     }

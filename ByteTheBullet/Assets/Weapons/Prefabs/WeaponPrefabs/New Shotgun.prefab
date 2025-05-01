@@ -315,9 +315,9 @@ MonoBehaviour:
   firePoint: {fileID: 7530891873590960621}
   projectileSpeed: 20
   accuracy: 0.8
-  maxRange: 50
-  damageDropoffStart: 25
-  minDamageMultiplier: 0.5
+  maxRange: 10
+  damageDropoffStart: 5
+  minDamageMultiplier: 0.2
   muzzleFlash: {fileID: 0}
   shootSound: {fileID: 0}
   reloadSound: {fileID: 0}
@@ -358,6 +358,9 @@ MonoBehaviour:
   soundVolume: 1
   randomizePitch: 1
   pitchVariation: 0.1
+  shotgunMaxRange: 10
+  shotgunDamageDropoffStart: 5
+  shotgunMinDamageMultiplier: 0.2
 --- !u!1 &7678092295430553603
 GameObject:
   m_ObjectHideFlags: 0
