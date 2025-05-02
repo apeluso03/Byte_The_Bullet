@@ -7,9 +7,10 @@ public class Enemy : MonoBehaviour
     private int currentHealth;
 
     [Header("Movement")]
-    public float moveSpeed = 2f; // Movement speed of the enemy
+    public float moveSpeed = 2f;
+    public float detectionRange = 5f; // 👈 Enemy will only chase the player within this range
 
-    private Transform player; // Reference to the player's transform
+    private Transform player;
     private Rigidbody2D rb;
 
     void Start()
@@ -17,7 +18,6 @@ public class Enemy : MonoBehaviour
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
 
-        // Find the player in the scene (assuming there's only one tagged "Player")
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -33,8 +33,13 @@ public class Enemy : MonoBehaviour
     {
         if (player != null)
         {
-            Vector2 direction = (player.position - transform.position).normalized;
-            rb.MovePosition(rb.position + direction * moveSpeed * Time.fixedDeltaTime);
+            float distanceToPlayer = Vector2.Distance(player.position, transform.position);
+
+            if (distanceToPlayer <= detectionRange)
+            {
+                Vector2 direction = (player.position - transform.position).normalized;
+                rb.MovePosition(rb.position + direction * moveSpeed * Time.fixedDeltaTime);
+            }
         }
         else
         {
@@ -54,7 +59,6 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
-        // Add death effects here (e.g., explosion, animation, sound)
         Destroy(gameObject);
     }
 
@@ -62,7 +66,7 @@ public class Enemy : MonoBehaviour
     {
         if (collision.CompareTag("Projectile"))
         {
-            Destroy(collision.gameObject); // Destroy the bullet on impact
+            Destroy(collision.gameObject);
             TakeDamage(10);
         }
     }
