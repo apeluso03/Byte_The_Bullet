@@ -47,7 +47,7 @@ namespace Weapons
         public float pumpDelay = 0.5f;
         
         // Screen Shake settings
-        [SerializeField] public bool enableScreenShake = false;
+        [SerializeField] public bool enableScreenShake = true;
         [SerializeField] public float screenShakeIntensity = 0.5f;
         [SerializeField] public float screenShakeDuration = 0.2f;
         [SerializeField] public float screenShakeFrequency = 25f;
@@ -497,7 +497,7 @@ namespace Weapons
             // Apply screen shake
             if (enableScreenShake && Camera.main != null)
             {
-                //StartCoroutine(BasicScreenShake());
+                StartCoroutine(BasicScreenShake());
             }
             
             // Spawn muzzle flash
@@ -516,7 +516,7 @@ namespace Weapons
         }
         
         // Basic screen shake implementation
-        private IEnumerator BasicScreenShake()
+       /* private IEnumerator BasicScreenShake()
         {
             Vector3 originalPos = Camera.main.transform.localPosition;
             float elapsed = 0f;
@@ -533,7 +533,31 @@ namespace Weapons
             }
             
             Camera.main.transform.localPosition = originalPos;
+        } */
+
+            private IEnumerator BasicScreenShake()
+        {
+            Vector3 originalPos = Camera.main.transform.position;
+            float elapsed = 0f;
+
+            while (elapsed < screenShakeDuration)
+            {
+                float x = Random.Range(-1f, 1f) * screenShakeIntensity;
+                float y = Random.Range(-1f, 1f) * screenShakeIntensity;
+
+                Camera.main.transform.position = new Vector3(
+                    originalPos.x + x,
+                    originalPos.y + y,
+                    originalPos.z
+                );
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            Camera.main.transform.position = originalPos;
         }
+
         
         // Recoil effect
         private IEnumerator ApplyRecoil()
