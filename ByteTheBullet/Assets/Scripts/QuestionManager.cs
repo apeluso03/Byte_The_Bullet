@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class QuestionManager : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class QuestionManager : MonoBehaviour
     public Text feedbackText;
 
     private int correctAnswerIndex;
+
+    public QuestionData currentQuestion;
 
     void Start()
     {
@@ -31,6 +34,8 @@ public class QuestionManager : MonoBehaviour
 
     public void DisplayQuestion(QuestionData question)
     {
+        currentQuestion = question;
+
         Debug.Log("E Pressed In Range");
         panel.SetActive(true);
         dismissButton.gameObject.SetActive(false);
@@ -66,7 +71,9 @@ public class QuestionManager : MonoBehaviour
         {
             feedbackText.text = "Correct!";
             FindObjectOfType<WallBlockRemover>().RemoveBlocks();
-
+            if (currentQuestion.correctAnswerIndex == 3) { 
+                SceneManager.LoadScene("ThankPlayer");
+            }
         }
         else
         {
