@@ -11,17 +11,18 @@ TagManager:
   - Room
   - SpawnPoint
   - Rooms
+  - RoomMiddle
   - WeaponPickup
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Projectile
   - Water
   - UI
   - Foreground
   - Midground
-  - 
+  - CameraZone
   - 
   - 
   - 

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1558335187484202167}
   - component: {fileID: 1583407283502506605}
   - component: {fileID: 7842244805220395096}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ShotgunPellet
   m_TagString: Projectile
   m_Icon: {fileID: 0}
