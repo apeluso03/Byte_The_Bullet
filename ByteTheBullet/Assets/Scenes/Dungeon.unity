@@ -347,7 +347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 568823960}
-  snapSpeed: 5
+  snapSpeed: 10
   snapThreshold: 0.05
 --- !u!114 &28738859
 MonoBehaviour:

@@ -65,6 +65,8 @@ public class QuestionManager : MonoBehaviour
         if (selectedIndex == correctAnswerIndex)
         {
             feedbackText.text = "Correct!";
+            FindObjectOfType<WallBlockRemover>().RemoveBlocks();
+
         }
         else
         {
