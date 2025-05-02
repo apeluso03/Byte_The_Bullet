@@ -126,12 +126,12 @@ namespace Weapons
             }
             
             // Find or create camera shake component (using modern API)
-            cameraShake = FindAnyObjectByType<CameraShake>();
+           /* cameraShake = FindAnyObjectByType<CameraShake>();
             if (cameraShake == null && Camera.main != null)
             {
                 cameraShake = Camera.main.gameObject.AddComponent<CameraShake>();
-            }
-        }
+            } */
+        } 
         
         protected virtual void Update()
         {
@@ -170,7 +170,7 @@ namespace Weapons
             PlayShootEffects();
             
             // Apply camera shake
-            ApplyCameraShake(shakeIntensity, shakeDuration);
+            //ApplyCameraShake(shakeIntensity, shakeDuration);
             
             // Update ammo and timing
             CurrentAmmo--;
@@ -290,13 +290,13 @@ namespace Weapons
             }
         }
         
-        protected virtual void ApplyCameraShake(float intensity, float duration)
+        /*protected virtual void ApplyCameraShake(float intensity, float duration)
         {
             if (cameraShake != null)
             {
                 cameraShake.ShakeCamera(intensity, duration);
             }
-        }
+        } */
         
         protected virtual IEnumerator ReloadCoroutine()
         {
