@@ -5616,6 +5616,7 @@ MonoBehaviour:
   - {fileID: 555473647}
   fullHeart: {fileID: 7611919021688551150, guid: b232991564ec3fc40b9ae1b515181429, type: 3}
   emptyHeart: {fileID: 7611919021688551150, guid: b232991564ec3fc40b9ae1b515181429, type: 3}
+  invincibilityDuration: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

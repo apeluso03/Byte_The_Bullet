@@ -290,7 +290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -114}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1139.1958, y: 557.9385}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1127562425
@@ -315,7 +315,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 652f7165b7c30ab46af6c4aad90a639b, type: 2}
-    m_FontSize: 200
+    m_FontSize: 275
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.75
-  m_Text: BYTE THE BULLET
+  m_Text: GAME OVER
 --- !u!222 &1127562426
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -598,8 +598,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: -175}
-  m_SizeDelta: {x: 278.0573, y: 73.408}
+  m_AnchoredPosition: {x: 0.000030518, y: -180.85}
+  m_SizeDelta: {x: 539.03, y: 73.408}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1886452496
 MonoBehaviour:
@@ -765,7 +765,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: PLAY
+  m_Text: PLAY AGAIN?
 --- !u!222 &2023982768
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -844,7 +844,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: BETA VERSION
+  m_Text: 
 --- !u!222 &2146736358
 CanvasRenderer:
   m_ObjectHideFlags: 0
