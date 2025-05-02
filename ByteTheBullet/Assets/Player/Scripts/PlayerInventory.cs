@@ -73,6 +73,12 @@ public class PlayerInventory : MonoBehaviour
         
         // Validate inventory slots every frame to catch when they're cleared
         ValidateInventorySlots();
+
+        // Drop current weapon with G key
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            DropCurrentWeapon();
+        }
     }
     
     void ValidateInventorySlots()
@@ -121,14 +127,11 @@ public class PlayerInventory : MonoBehaviour
             Debug.LogError("Weapon points are not assigned in PlayerInventory!");
         }
         
-        // Set equipped state
+        // Set equipped state and activation state
         weapon.isEquipped = active;
+        weapon.gameObject.SetActive(active);
         
-        // Activate or deactivate
-        if (weapon.gameObject.activeSelf != active)
-        {
-            weapon.gameObject.SetActive(active);
-        }
+        Debug.Log($"Weapon {weapon.name} setup complete - Active: {active}, IsEquipped: {weapon.isEquipped}");
     }
     
     public void EquipWeapon(int index)
@@ -191,9 +194,8 @@ public class PlayerInventory : MonoBehaviour
                 // Add weapon to inventory array
                 weaponSlots[i] = weapon;
                 
-                // Important: Don't disable the game object until after we've copied the reference
-                // Setup but keep inactive until equipped
-                SetupWeapon(weapon, false);
+                // Setup the weapon (this will handle activation state)
+                SetupWeapon(weapon, i == currentWeaponIndex);
                 
                 // If we don't have a weapon equipped, equip this one
                 if (currentWeaponIndex < 0 || weaponSlots[currentWeaponIndex] == null)
@@ -268,6 +270,47 @@ public class PlayerInventory : MonoBehaviour
         else
         {
             Debug.Log($"No weapon in slot {index} to force equip");
+        }
+    }
+
+    public void DropCurrentWeapon(){
+        if (currentWeaponIndex >= 0 && weaponSlots[currentWeaponIndex] != null){
+            WeaponAiming currentWeapon = weaponSlots[currentWeaponIndex];
+            
+            // Create pickup prefab
+            GameObject pickupPrefab = Resources.Load<GameObject>("WeaponPickup");
+            if (pickupPrefab != null)
+            {
+                // Spawn pickup slightly in front of player
+                Vector2 dropPos = transform.position + (Vector3)(Vector2.right * transform.localScale.x);
+                GameObject pickup = Instantiate(pickupPrefab, dropPos, Quaternion.identity);
+                
+                // Set the weapon prefab reference
+                SimpleWeaponPickup pickupScript = pickup.GetComponent<SimpleWeaponPickup>();
+                if (pickupScript != null)
+                {
+                    // Get the WeaponAiming component from the current weapon's GameObject
+                    WeaponAiming weaponPrefabComponent = currentWeapon.gameObject.GetComponent<WeaponAiming>();
+                    pickupScript.weaponPrefab = weaponPrefabComponent;
+                }
+            }
+
+            // Remove weapon from inventory
+            Destroy(currentWeapon.gameObject);
+            weaponSlots[currentWeaponIndex] = null;
+            
+            // Find next available weapon
+            for (int i = 0; i < weaponSlots.Length; i++)
+            {
+                if (weaponSlots[i] != null)
+                {
+                    EquipWeapon(i);
+                    break;
+                }
+            }
+            
+            // Notify listeners
+            OnWeaponChanged?.Invoke(currentWeaponIndex);
         }
     }
 }

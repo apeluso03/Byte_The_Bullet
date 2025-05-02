@@ -12,6 +12,7 @@ TagManager:
   - SpawnPoint
   - Rooms
   - RoomMiddle
+  - WeaponPickup
   layers:
   - Default
   - TransparentFX
