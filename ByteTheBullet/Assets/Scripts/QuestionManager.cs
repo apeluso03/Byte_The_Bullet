@@ -36,19 +36,10 @@ public class QuestionManager : MonoBehaviour
     {
         currentQuestion = question;
 
-        Debug.Log("E Pressed In Range");
         panel.SetActive(true);
         dismissButton.gameObject.SetActive(false);
-        if (panel.activeSelf)
-        {
-            Debug.Log("Panel is now active!");
-        }
-        else
-        {
-            Debug.Log("Failed to activate panel.");
-        }
-
         questionText.text = question.questionText;
+
         questionImage.sprite = question.questionImage;
         questionImage.gameObject.SetActive(question.questionImage != null);
 
@@ -56,7 +47,8 @@ public class QuestionManager : MonoBehaviour
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            int index = i; // capture correct index for lambda
+            int index = i;
+            answerButtons[i].interactable = true; // Re-enable buttons each time
             answerButtons[i].GetComponentInChildren<Text>().text = question.answerOptions[i];
             answerButtons[i].onClick.RemoveAllListeners();
             answerButtons[i].onClick.AddListener(() => OnAnswerClicked(index));
@@ -64,6 +56,7 @@ public class QuestionManager : MonoBehaviour
 
         feedbackText.text = "";
     }
+
 
     private void OnAnswerClicked(int selectedIndex)
     {
