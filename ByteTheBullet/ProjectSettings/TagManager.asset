@@ -8,16 +8,20 @@ TagManager:
   - PlayerWeapon
   - Projectile
   - Enemy
+  - Room
+  - SpawnPoint
+  - Rooms
+  - RoomMiddle
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Projectile
   - Water
   - UI
   - Foreground
   - Midground
-  - 
+  - CameraZone
   - 
   - 
   - 

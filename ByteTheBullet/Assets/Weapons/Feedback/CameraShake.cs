@@ -1,10 +1,15 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class CameraShake : MonoBehaviour
 {
     public void ShakeCamera(float intensity, float duration)
     {
+        //Do nothing
+    }
+}
+        /*
         StartCoroutine(ShakeCoroutine(intensity, duration));
     }
     
@@ -24,6 +29,6 @@ public class CameraShake : MonoBehaviour
             yield return null;
         }
         
-        transform.localPosition = originalPosition;
+        //transform.localPosition = originalPosition;
     }
-} 
+} */

@@ -47,7 +47,7 @@ namespace Weapons
         public float pumpDelay = 0.5f;
         
         // Screen Shake settings
-        [SerializeField] public bool enableScreenShake = true;
+        [SerializeField] public bool enableScreenShake = false;
         [SerializeField] public float screenShakeIntensity = 0.5f;
         [SerializeField] public float screenShakeDuration = 0.2f;
         [SerializeField] public float screenShakeFrequency = 25f;
@@ -497,7 +497,7 @@ namespace Weapons
             // Apply screen shake
             if (enableScreenShake && Camera.main != null)
             {
-                StartCoroutine(BasicScreenShake());
+                //StartCoroutine(BasicScreenShake());
             }
             
             // Spawn muzzle flash
