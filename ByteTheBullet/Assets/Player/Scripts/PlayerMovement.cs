@@ -75,4 +75,13 @@ public class PlayerMovement : MonoBehaviour
         currentVelocity = velocity;
         rb.linearVelocity = velocity;
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            GetComponent<PlayerHealth>().TakeDamage(1);
+        }
+    }
+
 }

@@ -69,6 +69,7 @@ public class QuestionManager : MonoBehaviour
         else
         {
             feedbackText.text = "Incorrect!";
+            FindObjectOfType<PlayerHealth>().TakeDamage(1);
         }
 
         foreach (Button btn in answerButtons)
