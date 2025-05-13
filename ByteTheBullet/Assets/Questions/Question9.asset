@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3296196c99b26dd4bb468fdf19de687e, type: 3}
+  m_Name: Question9
+  m_EditorClassIdentifier: 
+  questionText: What is the output of the following code?
+  questionImage: {fileID: 4410514187274524825, guid: fb0a294fba775624a8772e64c325c45f, type: 3}
+  answerOptions:
+  - 510
+  - 5 + 10
+  - 15
+  - None of these choices
+  correctAnswerIndex: 2

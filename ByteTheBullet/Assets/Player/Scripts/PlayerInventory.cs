@@ -215,7 +215,7 @@ public class PlayerInventory : MonoBehaviour
         return false;
     }
 
-    void OnGUI()
+/*     void OnGUI()
     {
         // Only show in play mode
         if (!Application.isPlaying) return;
@@ -256,7 +256,7 @@ public class PlayerInventory : MonoBehaviour
         
         // Add key instruction
         GUI.Label(new Rect(20, 170, 230, 20), "Press 1-4 to switch weapons", style);
-    }
+    } */
 
     public void ForceEquipWeapon(int index)
     {

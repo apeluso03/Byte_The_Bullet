@@ -4,17 +4,20 @@ using UnityEngine.SceneManagement;
 
 public class QuestionManager : MonoBehaviour
 {
+    [Header("UI")]
     public GameObject panel;
     public Text questionText;
     public Image questionImage;
     public Button[] answerButtons;
-
     public Button dismissButton;
-
     public Text feedbackText;
 
-    private int correctAnswerIndex;
+    [Header("Audio")]
+    public AudioClip correctSound;
+    public AudioClip incorrectSound;
+    private AudioSource audioSource;
 
+    private int correctAnswerIndex;
     public QuestionData currentQuestion;
 
     void Start()
@@ -22,6 +25,7 @@ public class QuestionManager : MonoBehaviour
         panel.SetActive(false);
         feedbackText.text = "";
         dismissButton.gameObject.SetActive(false);
+        audioSource = GetComponent<AudioSource>();
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
@@ -48,7 +52,7 @@ public class QuestionManager : MonoBehaviour
         for (int i = 0; i < answerButtons.Length; i++)
         {
             int index = i;
-            answerButtons[i].interactable = true; // Re-enable buttons each time
+            answerButtons[i].interactable = true;
             answerButtons[i].GetComponentInChildren<Text>().text = question.answerOptions[i];
             answerButtons[i].onClick.RemoveAllListeners();
             answerButtons[i].onClick.AddListener(() => OnAnswerClicked(index));
@@ -57,28 +61,29 @@ public class QuestionManager : MonoBehaviour
         feedbackText.text = "";
     }
 
-
     private void OnAnswerClicked(int selectedIndex)
     {
         if (selectedIndex == correctAnswerIndex)
         {
             feedbackText.text = "Correct!";
+            audioSource.PlayOneShot(correctSound);
             FindObjectOfType<WallBlockRemover>().RemoveBlocks();
-            if (currentQuestion.correctAnswerIndex == 3) { 
-                SceneManager.LoadScene("ThankPlayer");
+
+            foreach (Button btn in answerButtons)
+            {
+                btn.interactable = false;
             }
+
+            dismissButton.gameObject.SetActive(true);
         }
         else
         {
             feedbackText.text = "Incorrect!";
+            audioSource.PlayOneShot(incorrectSound);
             FindObjectOfType<PlayerHealth>().TakeDamage(1);
-        }
 
-        foreach (Button btn in answerButtons)
-        {
-            btn.interactable = false;
+            answerButtons[selectedIndex].interactable = false;
         }
-        dismissButton.gameObject.SetActive(true);
     }
 
     void HideQuestion()
