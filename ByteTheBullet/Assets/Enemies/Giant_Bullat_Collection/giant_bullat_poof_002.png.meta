@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      giant_bullat_poof_002_0: -3305054949414720307
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

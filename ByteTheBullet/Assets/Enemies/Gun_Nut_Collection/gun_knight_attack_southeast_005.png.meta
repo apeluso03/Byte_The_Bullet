@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_knight_attack_southeast_005_0: -4867850974593048446
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

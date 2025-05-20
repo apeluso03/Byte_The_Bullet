@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_toadie_crazed_002_0: -4873817449418459384
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

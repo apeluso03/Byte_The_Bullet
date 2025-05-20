@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_knight_attack_back_004_0: 93911927215163052
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

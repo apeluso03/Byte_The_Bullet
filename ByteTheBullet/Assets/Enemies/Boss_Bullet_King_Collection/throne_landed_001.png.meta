@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_landed_001_0: -5848409625399754341
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

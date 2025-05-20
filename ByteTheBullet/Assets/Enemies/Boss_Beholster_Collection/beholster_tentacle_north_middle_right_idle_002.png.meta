@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_tentacle_north_middle_right_idle_002_0: 7923360630785450201
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

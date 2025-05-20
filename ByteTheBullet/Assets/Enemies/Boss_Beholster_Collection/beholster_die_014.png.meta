@@ -247,7 +247,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_die_014_0: -2854681410821947225
+      beholster_die_014_1: -5652812546183483040
+      beholster_die_014_2: 329782695693734622
+      beholster_die_014_3: -8687777813882998218
+      beholster_die_014_4: -4106124823316616963
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_knight_walk_back_001_0: -560289594723232630
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

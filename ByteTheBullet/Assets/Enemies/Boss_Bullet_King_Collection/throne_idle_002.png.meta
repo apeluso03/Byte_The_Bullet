@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_idle_002_0: 5745770589283922501
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

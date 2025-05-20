@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      eyepatch_bullet_cover_right_leap_004_0: -1368167004966320718
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bullet_king_die_002_0: -6646627683986405807
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

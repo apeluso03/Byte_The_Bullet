@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bullet_king_goblet_throw_003_0: -4572658720782952615
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

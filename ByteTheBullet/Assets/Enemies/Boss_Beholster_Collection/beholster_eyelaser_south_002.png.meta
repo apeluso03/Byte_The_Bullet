@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_eyelaser_south_002_0: -2885000495786664505
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

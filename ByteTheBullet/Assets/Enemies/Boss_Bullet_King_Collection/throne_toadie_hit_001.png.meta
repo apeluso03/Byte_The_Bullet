@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_toadie_hit_001_0: 8291399479175105069
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

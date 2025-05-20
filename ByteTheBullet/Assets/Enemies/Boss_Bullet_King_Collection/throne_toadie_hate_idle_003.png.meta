@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_toadie_hate_idle_003_0: -1933489867121913544
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

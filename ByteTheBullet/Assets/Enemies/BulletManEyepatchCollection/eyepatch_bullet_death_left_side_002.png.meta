@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      eyepatch_bullet_death_left_side_002_0: -5989319069324628440
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

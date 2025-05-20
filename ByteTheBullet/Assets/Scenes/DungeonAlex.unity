@@ -3582,11 +3582,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3676185733135000222, guid: 56afcb0efe081ae4bb00229d22422edc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -20
+      value: 39.4
       objectReference: {fileID: 0}
     - target: {fileID: 3676185733135000222, guid: 56afcb0efe081ae4bb00229d22422edc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 107
+      value: 10.3
       objectReference: {fileID: 0}
     - target: {fileID: 3676185733135000222, guid: 56afcb0efe081ae4bb00229d22422edc, type: 3}
       propertyPath: m_LocalPosition.z
@@ -14386,6 +14386,8 @@ MonoBehaviour:
   fullHeart: {fileID: 7611919021688551150, guid: b232991564ec3fc40b9ae1b515181429, type: 3}
   emptyHeart: {fileID: 7611919021688551150, guid: b232991564ec3fc40b9ae1b515181429, type: 3}
   invincibilityDuration: 1
+  damageSoundClip: {fileID: 0}
+  audioSource: {fileID: 0}
 --- !u!4 &2144304565 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 577237706161919093, guid: 07eb6b3ea48fbc54c8087265b3d8675d, type: 3}

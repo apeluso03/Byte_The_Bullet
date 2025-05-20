@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      eyepatch_bullet_idle_left_002_0: -2519090950126394000
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

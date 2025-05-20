@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_north_charge_003_0: -4931863955507278587
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

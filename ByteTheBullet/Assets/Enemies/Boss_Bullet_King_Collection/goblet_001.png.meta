@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      goblet_001_0: -4924607384259012784
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

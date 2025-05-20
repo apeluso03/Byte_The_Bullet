@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_knight_side_idle_right_003_0: -6160889779116984420
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

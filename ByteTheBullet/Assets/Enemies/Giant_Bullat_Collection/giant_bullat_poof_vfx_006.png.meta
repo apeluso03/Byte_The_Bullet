@@ -247,7 +247,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      giant_bullat_poof_vfx_006_0: 4989528480062299681
+      giant_bullat_poof_vfx_006_1: -6778345563379600994
+      giant_bullat_poof_vfx_006_2: 1012581821398131873
+      giant_bullat_poof_vfx_006_3: -8154973449711320810
+      giant_bullat_poof_vfx_006_4: 1504568782920113026
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

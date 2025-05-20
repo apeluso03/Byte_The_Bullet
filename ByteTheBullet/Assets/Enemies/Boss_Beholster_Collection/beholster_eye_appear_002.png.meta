@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_eye_appear_002_0: 5809867672136811758
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -225,3 +225,4 @@ MonoBehaviour:
   maxHealth: 1500
   moveSpeed: 5
   detectionRange: 25
+  takeDamageClip: {fileID: 8300000, guid: 54c2da65f0c05da4eb8aa99a2b1c3f2f, type: 3}

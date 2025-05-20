@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_fall_003_0: 714591638560189994
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -222,7 +222,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_nut_burst_die_left_009_0: 7805992248144283627
+      gun_nut_burst_die_left_009_1: -6587535453028899561
+      gun_nut_burst_die_left_009_2: -4687114019547379612
+      gun_nut_burst_die_left_009_3: 3555086869243601349
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

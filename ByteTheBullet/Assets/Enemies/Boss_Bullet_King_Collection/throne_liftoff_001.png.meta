@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_liftoff_001_0: -4845367223969284397
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

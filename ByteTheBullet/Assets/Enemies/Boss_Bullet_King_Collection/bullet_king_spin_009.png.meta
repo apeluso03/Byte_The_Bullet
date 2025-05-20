@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bullet_king_spin_009_0: 5519323100042516697
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

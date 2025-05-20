@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_pound_001_0: 7342462716585998516
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      eyepatch_bullet_pitfall_right_002_0: 2245427494361555786
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

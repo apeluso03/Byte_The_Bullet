@@ -622,7 +622,27 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_nut_burst_die_right_008_0: 2102169877528753550
+      gun_nut_burst_die_right_008_1: -8447644362115980766
+      gun_nut_burst_die_right_008_10: 5933905122284820436
+      gun_nut_burst_die_right_008_11: 4057442508723367826
+      gun_nut_burst_die_right_008_12: -2127666691041237213
+      gun_nut_burst_die_right_008_13: -7454950601384632836
+      gun_nut_burst_die_right_008_14: 2221867076311628052
+      gun_nut_burst_die_right_008_15: 2695808067163347801
+      gun_nut_burst_die_right_008_16: -3311725483134695674
+      gun_nut_burst_die_right_008_17: -7051455704482891643
+      gun_nut_burst_die_right_008_18: -4695857828427034385
+      gun_nut_burst_die_right_008_19: 2381782114989880366
+      gun_nut_burst_die_right_008_2: -7358533347205817836
+      gun_nut_burst_die_right_008_3: -5779676796343568640
+      gun_nut_burst_die_right_008_4: 6652083822468720549
+      gun_nut_burst_die_right_008_5: -7035056583229546786
+      gun_nut_burst_die_right_008_6: -8003139624129927618
+      gun_nut_burst_die_right_008_7: -7407690256578704746
+      gun_nut_burst_die_right_008_8: -132835853170809348
+      gun_nut_burst_die_right_008_9: -344997062297478600
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

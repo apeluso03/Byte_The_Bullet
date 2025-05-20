@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_fire_mega_004_0: -7846921216870060846
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

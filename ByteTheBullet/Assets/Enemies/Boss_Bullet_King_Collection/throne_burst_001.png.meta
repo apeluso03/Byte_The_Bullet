@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_burst_001_0: 3338463332691102279
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

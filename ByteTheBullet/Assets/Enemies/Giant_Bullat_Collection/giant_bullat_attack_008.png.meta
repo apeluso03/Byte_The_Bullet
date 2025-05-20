@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      giant_bullat_attack_008_0: -2087665153264376765
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

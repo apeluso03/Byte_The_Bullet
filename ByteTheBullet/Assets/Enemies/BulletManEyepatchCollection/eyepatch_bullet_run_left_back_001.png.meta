@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      eyepatch_bullet_run_left_back_001_0: 2049283518368805047
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

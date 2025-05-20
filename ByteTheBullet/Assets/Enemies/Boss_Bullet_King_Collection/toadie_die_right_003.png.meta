@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      toadie_die_right_003_0: -8014573721904620963
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

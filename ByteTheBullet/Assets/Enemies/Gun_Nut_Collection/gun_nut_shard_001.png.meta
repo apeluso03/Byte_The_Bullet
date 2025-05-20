@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_nut_shard_001_0: 6114568201665828758
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

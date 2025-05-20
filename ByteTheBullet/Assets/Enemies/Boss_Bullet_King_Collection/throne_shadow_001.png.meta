@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_shadow_001_0: 1520228691837478812
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

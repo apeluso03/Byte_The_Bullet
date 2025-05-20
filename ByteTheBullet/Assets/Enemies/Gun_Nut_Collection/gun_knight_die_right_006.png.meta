@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_knight_die_right_006_0: 1829222830945265596
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

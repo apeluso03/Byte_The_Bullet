@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_south_charge_eye_003_0: -7271464287629768922
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

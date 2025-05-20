@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_idle_front_005_0: 2732624976046143347
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_spin_attack_009_0: 8642598348113718842
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

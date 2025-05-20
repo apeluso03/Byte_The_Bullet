@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_toadie_sceptre_idle_003_0: -3799920704081557002
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

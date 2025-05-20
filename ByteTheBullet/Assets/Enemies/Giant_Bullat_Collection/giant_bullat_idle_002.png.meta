@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      giant_bullat_idle_002_0: 2946560651782770119
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

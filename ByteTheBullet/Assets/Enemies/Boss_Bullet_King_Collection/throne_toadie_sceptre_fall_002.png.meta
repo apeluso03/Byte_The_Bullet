@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      throne_toadie_sceptre_fall_002_0: -2677000175814506397
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

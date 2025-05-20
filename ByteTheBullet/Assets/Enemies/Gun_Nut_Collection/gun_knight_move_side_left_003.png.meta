@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      gun_knight_move_side_left_003_0: 5728116471879545176
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

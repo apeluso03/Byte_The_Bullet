@@ -222,7 +222,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      beholster_teleport_008_0: 7225410602834834849
+      beholster_teleport_008_1: 6299668584316485865
+      beholster_teleport_008_2: 7663002352299952753
+      beholster_teleport_008_3: -3354770577003439488
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
