@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -81,6 +82,10 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             GetComponent<PlayerHealth>().TakeDamage(1);
+        }
+        if (collision.gameObject.CompareTag("GameEnd"))
+        {
+            SceneManager.LoadScene("GameEnd");
         }
     }
 

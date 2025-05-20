@@ -13,11 +13,18 @@ public class RoomTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Camera snapping
+            // Camera snapping or follow mode
             CameraSnap camSnap = Camera.main.GetComponent<CameraSnap>();
             if (camSnap != null)
             {
-                camSnap.SetRoom(transform);
+                if (CompareTag("FinalBossRoom"))
+                {
+                    camSnap.SetRoom(null); // Let camera follow player
+                }
+                else if (CompareTag("RoomMiddle"))
+                {
+                    camSnap.SetRoom(transform); // Snap to room center
+                }
             }
 
             // Enemy spawning with delay

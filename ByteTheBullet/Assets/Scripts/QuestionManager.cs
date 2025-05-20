@@ -11,6 +11,7 @@ public class QuestionManager : MonoBehaviour
     public Button[] answerButtons;
     public Button dismissButton;
     public Text feedbackText;
+    public Text scoreText;  // Add this in Inspector
 
     [Header("Audio")]
     public AudioClip correctSound;
@@ -19,6 +20,8 @@ public class QuestionManager : MonoBehaviour
 
     private int correctAnswerIndex;
     public QuestionData currentQuestion;
+
+    private int score = 0;
 
     void Start()
     {
@@ -34,6 +37,8 @@ public class QuestionManager : MonoBehaviour
         }
 
         dismissButton.onClick.AddListener(HideQuestion);
+
+        UpdateScoreText(); // Initialize score display
     }
 
     public void DisplayQuestion(QuestionData question)
@@ -67,6 +72,10 @@ public class QuestionManager : MonoBehaviour
         {
             feedbackText.text = "Correct!";
             audioSource.PlayOneShot(correctSound);
+
+            score++;                    // Increment score
+            UpdateScoreText();         // Update score UI
+
             FindObjectOfType<WallBlockRemover>().RemoveBlocks();
 
             foreach (Button btn in answerButtons)
@@ -84,6 +93,11 @@ public class QuestionManager : MonoBehaviour
 
             answerButtons[selectedIndex].interactable = false;
         }
+    }
+
+    void UpdateScoreText()
+    {
+        scoreText.text = score.ToString();
     }
 
     void HideQuestion()

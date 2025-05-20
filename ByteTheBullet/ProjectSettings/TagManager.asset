@@ -13,6 +13,9 @@ TagManager:
   - Rooms
   - RoomMiddle
   - WeaponPickup
+  - FinalBossRoom
+  - FinalBoss
+  - GameEnd
   layers:
   - Default
   - TransparentFX
