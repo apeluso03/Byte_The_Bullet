@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 2f;
-    public float detectionRange = 5f; // 👈 Enemy will only chase the player within this range
+    public float detectionRange = 5f;
 
     private Transform player;
     private Rigidbody2D rb;
@@ -43,10 +43,6 @@ public class Enemy : MonoBehaviour
                 rb.MovePosition(rb.position + direction * moveSpeed * Time.fixedDeltaTime);
             }
         }
-        else
-        {
-            Debug.LogError("Player transform is null!");
-        }
     }
 
     public void TakeDamage(int damage)
@@ -62,6 +58,26 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        // Check if camera's currentRoomCenter is null (Final Boss Room)
+        CameraSnap camSnap = Camera.main.GetComponent<CameraSnap>();
+        if (camSnap != null && camSnap.player != null)
+        {
+            if (camSnap.player != null && camSnap.GetCurrentRoomCenter() == null)
+            {
+                // Find WallBlockRemover and trigger block removal
+                WallBlockRemover blockRemover = FindObjectOfType<WallBlockRemover>();
+                if (blockRemover != null)
+                {
+                    blockRemover.RemoveBlocks();
+                    Debug.Log("Enemy: Final boss defeated, wall blocks removed.");
+                }
+                else
+                {
+                    Debug.LogWarning("Enemy: WallBlockRemover not found in the scene.");
+                }
+            }
+        }
+
         Destroy(gameObject);
     }
 
