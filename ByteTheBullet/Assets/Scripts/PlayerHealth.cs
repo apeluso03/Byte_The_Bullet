@@ -18,33 +18,38 @@ public class PlayerHealth : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
+    public AudioClip damageSoundClip;
+    public AudioSource audioSource;
+
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentHealth = maxHealth;
         UpdateHearts();
+        audioSource = GetComponent<AudioSource>();
+    }
+    public void TakeDamage(int amount) {
+    if (isInvincible) return;
+
+    int newHealth = currentHealth - amount;
+
+    // Only play the sound if the player will still be alive after taking damage
+    if (newHealth > 0) {
+        audioSource.clip = damageSoundClip;
+        audioSource.Play();
     }
 
-    public void TakeDamage(int amount)
-    {
-        if (isInvincible) return;
+    currentHealth = Mathf.Clamp(newHealth, 0, maxHealth);
+    UpdateHearts();
 
-        currentHealth -= amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        UpdateHearts();
-
-        if (currentHealth <= 0)
-        {
-            Debug.Log("Player has died!");
-            SceneManager.LoadScene("GameOver");
-            // Optionally trigger game over here
-        }
-        else
-        {
-            StartCoroutine(InvincibilityCoroutine());
-        }
+    if (currentHealth <= 0) {
+        Debug.Log("Player has died!");
+        SceneManager.LoadScene("GameOver");
+    } else {
+        StartCoroutine(InvincibilityCoroutine());
     }
+}
 
     void UpdateHearts()
     {

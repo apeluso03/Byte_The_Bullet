@@ -13,6 +13,8 @@ public class Enemy : MonoBehaviour
     private Transform player;
     private Rigidbody2D rb;
 
+    public AudioClip takeDamageClip;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -50,6 +52,7 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        AudioSource.PlayClipAtPoint(takeDamageClip, transform.position, 1f);
         Debug.Log("Current Health: " + currentHealth);
         if (currentHealth <= 0)
         {
