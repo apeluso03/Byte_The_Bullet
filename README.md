@@ -19,9 +19,9 @@ Space to dodge roll
 E to interact
 
 # Screenshots
-![Screenshot of a question being answered](docs/Screenshot1.png)<br>
-![Screenshot of locked question room](docs/Screenshot2.png)<br>
-![Screenshot of player fighting an enemy](docs/Screenshot3.png)
+Answering a Question![Screenshot of a question being answered](docs/Screenshot1.png)<br>
+Locked in Question Room![Screenshot of locked question room](docs/Screenshot2.png)<br>
+Fighting an Enemy![Screenshot of player fighting an enemy](docs/Screenshot3.png)
 
 # Trailer
 [Link](https://www.youtube.com/watch?v=-QafAWPW3FY&ab_channel=apel)
