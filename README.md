@@ -27,6 +27,7 @@ E to interact
 [Link](https://www.youtube.com/watch?v=-QafAWPW3FY&ab_channel=apel)
 
 # EGDD
+[EGDD Link](https://github.com/apeluso03/Byte_The_Bullet/blob/main/docs/egdd.md)
 
 # Credits
 
