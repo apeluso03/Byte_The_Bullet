@@ -1,2 +1,24 @@
 fileFormatVersion: 2
 guid: ba91661d3ec57ec478900512efff8021
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - projectilePrefab: {instanceID: 0}
+  - firePoint: {instanceID: 0}
+  - muzzleFlash: {instanceID: 0}
+  - shootSound: {fileID: 8300000, guid: 6b45123a9805a0749ac2a59c007d2594, type: 3}
+  - reloadSound: {instanceID: 0}
+  - emptySound: {instanceID: 0}
+  - impactEffectPrefab: {instanceID: 0}
+  - pelletPrefab: {instanceID: 0}
+  - muzzleFlashPrefab: {instanceID: 0}
+  - shotgunFireSound: {fileID: 8300000, guid: 6b45123a9805a0749ac2a59c007d2594, type: 3}
+  - shotgunReloadSound: {instanceID: 0}
+  - shotgunEmptySound: {instanceID: 0}
+  - pumpSound: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -14,7 +14,7 @@ public class ShotgunWeaponEditor : Editor
     private bool showFireSettings = true;
     private bool showFeedbackSettings = true;
     private bool showAmmoSettings = true;
-    private bool showSoundSettings = true;
+    //private bool showSoundSettings = true;
     
     // Add this as a class field at the top of the ShotgunWeaponEditor class
     private float[] pelletAngles;
