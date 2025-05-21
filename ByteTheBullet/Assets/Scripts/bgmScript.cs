@@ -3,12 +3,21 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class bgmScript : MonoBehaviour
 {
-    public AudioClip bgmClip; // Assign in Inspector
+    public static bgmScript instance; // Singleton
+    public AudioClip bgmClip;
+
     private AudioSource audioSource;
 
     void Awake()
     {
-        // Ensure only one BGM instance persists (optional)
+        // Singleton pattern: Destroy duplicates
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject); // Destroy this if one already exists
+            return;
+        }
+
+        instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -18,7 +27,6 @@ public class bgmScript : MonoBehaviour
         audioSource.clip = bgmClip;
         audioSource.loop = true;
         audioSource.playOnAwake = false;
-
         audioSource.Play();
     }
 }
