@@ -368,8 +368,9 @@ MonoBehaviour:
   uiText: {fileID: 1419405860}
   textScreens:
   - You wake up.
-  - You find youself in a dark, old dungeon filled with bad code.
-  - The last thing you remeber is your code starting to bug out, and now you're here.
+  - You find yourself in a dark, old dungeon filled with bad code.
+  - The last thing you remember is your code starting to bug out, and now you're
+    here.
   - 'You have one objective: Escape.'
   - Before you Byte the Bullet.
   - 'Controls:
