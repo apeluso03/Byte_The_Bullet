@@ -128,10 +128,15 @@
         document.querySelector("#unity-fullscreen-button").onclick = () => {
           unityInstance.SetFullscreen(1);
         };
+
+        // ✅ Enforce the 4:3 ratio after Unity is fully loaded
+        resizeCanvasToAspectRatio();
+
       }).catch((message) => {
         alert(message);
       });
     };
+
 
     document.body.appendChild(script);
   </script>
