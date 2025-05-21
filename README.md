@@ -10,6 +10,8 @@ Byte The Bullet is an educational game meant to help players hone their basic Py
 You wake up in a mysterious dungeon, surrounded by enemies and bad code. You need to escape the only way you know how - your vast coding knowledge. In this Enter the Gungeon-inspired top down shooter, you will fight enemies and solve python coding problems to advance through the dungeon. Can you defeat the final boss and escape the dungeon, or will you Byte the Bullet trying?
 
 # Instructions
+[Play Here!](https://apeluso03.github.io/Byte_The_Bullet/)
+## Controls
 WASD to move
 Use the Mouse to aim
 Left Click to fire
