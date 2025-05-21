@@ -32,3 +32,6 @@ E to interact
 # Credits
 
 # Links
+- [Game Deployment](https://apeluso03.github.io/Byte_The_Bullet/)
+- [Trailer](https://www.youtube.com/watch?v=-QafAWPW3FY&ab_channel=apel)
+- [Slides Presentation](https://docs.google.com/presentation/d/1IABZwwn1UUpvBmw21MLisPKcqVkrgqSdMTJ2ehTQ2tQ/edit?slide=id.p#slide=id.p)
