@@ -30,6 +30,17 @@ E to interact
 [EGDD Link](https://github.com/apeluso03/Byte_The_Bullet/blob/main/docs/egdd.md)
 
 # Credits
+## Sprites
+Some sprites used in this project are from Enter The Gungeon and are the property of creators Dodge Roll and publisher Devolver Digital
+
+All rights belong to their respective owners. Used here for educational purposes only.
+
+- Sprite source: [Spriters Resource](https://www.spriters-resource.com/pc_computer/enterthegungeon/)
+
+## SFX
+- [BGM](https://www.fesliyanstudios.com/royalty-free-music/download/8-bit-adventure/2282)
+- [Wrong Answer Sound](https://pixabay.com/sound-effects/wronganswer-37702/)
+- [Correct Answer Sound](https://pixabay.com/sound-effects/correct-choice-43861/)
 
 # Links
 - [Game Deployment](https://apeluso03.github.io/Byte_The_Bullet/)
