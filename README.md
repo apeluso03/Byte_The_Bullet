@@ -21,8 +21,8 @@ E to interact
 # Trailer
 [Link](https://www.youtube.com/watch?v=-QafAWPW3FY&ab_channel=apel)
 
-#EGDD
+# EGDD
 
-#Credits
+# Credits
 
-#Links
+# Links
