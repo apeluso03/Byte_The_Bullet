@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class RoomTrigger : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class RoomTrigger : MonoBehaviour
                 if (CompareTag("FinalBossRoom"))
                 {
                     camSnap.SetRoom(null); // Let camera follow player
+                }
+                if (CompareTag("GameEnd"))
+                {
+                    SceneManager.LoadScene("GameEnd");
                 }
                 else if (CompareTag("RoomMiddle"))
                 {
