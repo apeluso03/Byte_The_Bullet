@@ -1,13 +1,27 @@
 # Byte The Bullet
-Byte The Bullet is an educational game meant to help players hone their basic coding skills in puzzles and coding problems reminiscent of Leetcode
+Byte The Bullet is an educational game meant to help players hone their basic Python coding skills using coding problems alongside engaging gameplay.
 
 # Developers
 - Alexander Peluso (apeluso@udel.edu)
 - Kyle Malice (malice@udel.edu)
 - James Lloyd (jclloyd@udel.edu)
 
-# Basic Gameplay Loop
-Work in progress - Gameplay will revolve around _Enter The Gungeon_ style top-down shooter combat with coding rooms dispersed throughout the map. Players
-must fight their way through rooms and solve coding problems to escape.
+# About
+You wake up in a mysterious dungeon, surrounded by enemies and bad code. You need to escape the only way you know how - your vast coding knowledge. In this Enter the Gungeon-inspired top down shooter, you will fight enemies and solve python coding problems to advance through the dungeon. Can you defeat the final boss and escape the dungeon, or will you Byte the Bullet trying?
 
-# To Be Coninued...
+# Instructions
+WASD to move
+Use the Mouse to aim
+Left Click to fire
+Space to dodge roll
+E to interact
+
+# Screenshots
+
+#Trailer
+
+#EGDD
+
+#Credits
+
+#Links
