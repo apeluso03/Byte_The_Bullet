@@ -19,9 +19,9 @@ Space to dodge roll
 E to interact
 
 # Screenshots
-![Screenshot of a question being answered]([https://myoctocat.com/assets/images/base-octocat.svg](docs/Screenshot1.png))
-![Screenshot of locked question room]([https://myoctocat.com/assets/images/base-octocat.svg](docs/Screenshot2.png))
-![Screenshot of player fighting an enemy]([https://myoctocat.com/assets/images/base-octocat.svg](docs/Screenshot3.png))
+![Screenshot of a question being answered](docs/Screenshot1.png)
+![Screenshot of locked question room](docs/Screenshot2.png)
+![Screenshot of player fighting an enemy](docs/Screenshot3.png)
 
 # Trailer
 [Link](https://www.youtube.com/watch?v=-QafAWPW3FY&ab_channel=apel)
