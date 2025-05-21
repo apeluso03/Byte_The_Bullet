@@ -255,8 +255,9 @@ namespace Weapons
                     audioSource.pitch = 1.0f + Random.Range(-pitchVariation, pitchVariation);
                 else
                     audioSource.pitch = 1.0f;
-                
-                audioSource.PlayOneShot(shotgunFireSound, soundVolume);
+
+                audioSource.clip = shotgunFireSound;
+                audioSource.Play();
             }
             
             // Apply feedback effects

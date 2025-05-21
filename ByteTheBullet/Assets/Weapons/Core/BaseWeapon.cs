@@ -367,7 +367,7 @@ namespace Weapons
             Gizmos.DrawRay(firePoint.position, firePoint.forward * 1f);
         }
         
-        protected void DrawGizmoCircle(Vector3 center, float radius, int segments)
+        private void DrawGizmoCircle(Vector3 center, float radius, int segments)
         {
             Vector3 prevPos = center + new Vector3(radius, 0, 0);
             
@@ -451,6 +451,8 @@ namespace Weapons
             if (impactEffectPrefab != null)
             {
                 Instantiate(impactEffectPrefab, hitPoint, Quaternion.identity);
+                Physics2D.IgnoreCollision(hitObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+
             }
             
             // Destroy projectile

@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class StartGame : MonoBehaviour
 {
-    public void startGame()
+    public void restartGame()
     {
         // Destroy background music if it exists
         var bgm = FindObjectOfType<bgmScript>();
@@ -20,5 +20,15 @@ public class StartGame : MonoBehaviour
 
         // Finally, load the scene
         SceneManager.LoadScene("Dungeon");
+    }
+
+    public void startGame()
+    {
+        SceneManager.LoadScene("Dungeon");
+    }
+
+    public void loadCutscene()
+    {
+        SceneManager.LoadScene("IntroCutscene");
     }
 }
